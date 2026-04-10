@@ -1,6 +1,7 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common'
 import { eq, ilike } from 'drizzle-orm'
-import { DATABASE, DrizzleDB } from '../db/db.module'
+import { DATABASE } from '../db/db.module'
+import type { DrizzleDB } from '../db/db.module'
 import { categories } from '../db/schema'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
