@@ -1,4 +1,9 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Inject,
+  NotFoundException,
+} from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { DATABASE } from '../db/db.module';
 import type { DrizzleDB } from '../db/db.module';
@@ -32,7 +37,11 @@ export class SpotsService {
     return spot;
   }
 
-  async update(id: string, dto: UpdateSpotDto) {
+  async update(categoryId: string, id: string, dto: UpdateSpotDto) {
+    if (Object.keys(dto).length === 0) {
+      throw new BadRequestException('Request body must not be empty');
+    }
+    await this.categoriesService.findOne(categoryId);
     const [spot] = await this.db
       .update(spots)
       .set(dto)
@@ -42,7 +51,8 @@ export class SpotsService {
     return spot;
   }
 
-  async remove(id: string) {
+  async remove(categoryId: string, id: string) {
+    await this.categoriesService.findOne(categoryId);
     const [spot] = await this.db
       .delete(spots)
       .where(eq(spots.id, id))

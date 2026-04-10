@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SpotsService } from './spots.service';
 import { DATABASE } from '../db/db.module';
 import { CategoriesService } from '../categories/categories.service';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('SpotsService', () => {
   let service: SpotsService;
@@ -102,6 +102,12 @@ describe('SpotsService', () => {
   });
 
   describe('update', () => {
+    it('throws BadRequestException when body is empty', async () => {
+      await expect(service.update('cat-1', 'spot-1', {})).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
     it('returns updated spot', async () => {
       const spot = {
         id: 'spot-1',
@@ -110,14 +116,16 @@ describe('SpotsService', () => {
         createdAt: new Date(),
       };
       whereChain.returning.mockResolvedValue([spot]);
-      const result = await service.update('spot-1', { name: 'Updated' });
+      const result = await service.update('cat-1', 'spot-1', {
+        name: 'Updated',
+      });
       expect(result).toEqual(spot);
     });
 
     it('throws NotFoundException when spot not found', async () => {
       whereChain.returning.mockResolvedValue([]);
       await expect(
-        service.update('non-existent', { name: 'X' }),
+        service.update('cat-1', 'non-existent', { name: 'X' }),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -131,13 +139,13 @@ describe('SpotsService', () => {
         createdAt: new Date(),
       };
       whereChain.returning.mockResolvedValue([spot]);
-      const result = await service.remove('spot-1');
+      const result = await service.remove('cat-1', 'spot-1');
       expect(result).toEqual(spot);
     });
 
     it('throws NotFoundException when spot not found', async () => {
       whereChain.returning.mockResolvedValue([]);
-      await expect(service.remove('non-existent')).rejects.toThrow(
+      await expect(service.remove('cat-1', 'non-existent')).rejects.toThrow(
         NotFoundException,
       );
     });

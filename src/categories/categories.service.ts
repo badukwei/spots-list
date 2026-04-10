@@ -1,4 +1,9 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Inject,
+  NotFoundException,
+} from '@nestjs/common';
 import { eq, ilike } from 'drizzle-orm';
 import { DATABASE } from '../db/db.module';
 import type { DrizzleDB } from '../db/db.module';
@@ -37,6 +42,9 @@ export class CategoriesService {
   }
 
   async update(id: string, dto: UpdateCategoryDto) {
+    if (Object.keys(dto).length === 0) {
+      throw new BadRequestException('Request body must not be empty');
+    }
     const [category] = await this.db
       .update(categories)
       .set(dto)

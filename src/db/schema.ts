@@ -3,7 +3,7 @@ import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
 export const categories = pgTable('categories', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const spots = pgTable('spots', {
@@ -15,5 +15,5 @@ export const spots = pgTable('spots', {
   address: text('address'),
   mapsUrl: text('maps_url'),
   notes: text('notes'),
-  createdAt: timestamp('created_at').defaultNow(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });

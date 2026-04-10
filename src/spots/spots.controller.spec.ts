@@ -2,15 +2,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SpotsController } from './spots.controller';
 import { SpotsService } from './spots.service';
+import { UpdateSpotDto } from './dto/update-spot.dto';
 
 describe('SpotsController', () => {
   let controller: SpotsController;
 
   const mockService = {
     findByCategory: jest.fn().mockResolvedValue([]),
-    create: jest.fn().mockResolvedValue({ id: 'spot-1', name: 'New Spot' }),
-    update: jest.fn().mockResolvedValue({ id: 'spot-1', name: 'Updated Spot' }),
-    remove: jest.fn().mockResolvedValue({ id: 'spot-1', name: 'Deleted Spot' }),
+    create: jest
+      .fn()
+      .mockResolvedValue({ id: 'spot-1', name: 'Spot', categoryId: 'cat-1' }),
+    update: jest.fn().mockResolvedValue({ id: 'spot-1', name: 'Updated' }),
+    remove: jest.fn().mockResolvedValue({ id: 'spot-1' }),
   };
 
   beforeEach(async () => {
@@ -32,19 +35,17 @@ describe('SpotsController', () => {
     const dto = { name: 'New Spot' };
     const result = await controller.create('cat-1', dto);
     expect(mockService.create).toHaveBeenCalledWith('cat-1', dto);
-    expect(result).toEqual({ id: 'spot-1', name: 'New Spot' });
+    expect(result).toEqual({ id: 'spot-1', name: 'Spot', categoryId: 'cat-1' });
   });
 
-  it('update calls service with id and dto', async () => {
-    const dto = { name: 'Updated Spot' };
-    const result = await controller.update('spot-1', dto);
-    expect(mockService.update).toHaveBeenCalledWith('spot-1', dto);
-    expect(result).toEqual({ id: 'spot-1', name: 'Updated Spot' });
+  it('update calls service with categoryId, id and dto', async () => {
+    const dto: UpdateSpotDto = { name: 'Updated' };
+    await controller.update('cat-1', 'spot-1', dto);
+    expect(mockService.update).toHaveBeenCalledWith('cat-1', 'spot-1', dto);
   });
 
-  it('remove calls service with id', async () => {
-    const result = await controller.remove('spot-1');
-    expect(mockService.remove).toHaveBeenCalledWith('spot-1');
-    expect(result).toEqual({ id: 'spot-1', name: 'Deleted Spot' });
+  it('remove calls service with categoryId and id', async () => {
+    await controller.remove('cat-1', 'spot-1');
+    expect(mockService.remove).toHaveBeenCalledWith('cat-1', 'spot-1');
   });
 });

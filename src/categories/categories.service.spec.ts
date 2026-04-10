@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from './categories.service';
 import { DATABASE } from '../db/db.module';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('CategoriesService', () => {
   let service: CategoriesService;
@@ -97,6 +97,12 @@ describe('CategoriesService', () => {
   });
 
   describe('update', () => {
+    it('throws BadRequestException when body is empty', async () => {
+      await expect(service.update('uuid-1', {})).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
     it('returns updated category', async () => {
       // update chain: .update().set().where().returning() — terminal is whereChain.returning
       const category = { id: 'uuid-1', name: 'Updated', createdAt: new Date() };

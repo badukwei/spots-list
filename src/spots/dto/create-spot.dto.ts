@@ -9,7 +9,7 @@ export class CreateSpotDto {
   @IsOptional()
   address?: string;
 
-  @IsUrl()
+  @IsUrl({ require_protocol: false })
   @IsOptional()
   mapsUrl?: string;
 
