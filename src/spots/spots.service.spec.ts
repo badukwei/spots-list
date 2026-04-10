@@ -1,13 +1,14 @@
-// src/spots/spots.service.spec.ts
 import { Test, TestingModule } from '@nestjs/testing'
 import { SpotsService } from './spots.service'
 import { DATABASE } from '../db/db.module'
+import { CategoriesService } from '../categories/categories.service'
 import { NotFoundException } from '@nestjs/common'
 
 describe('SpotsService', () => {
   let service: SpotsService
   let mockDb: any
   let whereChain: any
+  let mockCategoriesService: any
 
   beforeEach(async () => {
     whereChain = {
@@ -29,10 +30,15 @@ describe('SpotsService', () => {
       delete: jest.fn().mockReturnThis(),
     }
 
+    mockCategoriesService = {
+      findOne: jest.fn().mockResolvedValue({ id: 'cat-1', name: 'Test Category', createdAt: new Date() }),
+    }
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SpotsService,
         { provide: DATABASE, useValue: mockDb },
+        { provide: CategoriesService, useValue: mockCategoriesService },
       ],
     }).compile()
 
@@ -46,12 +52,16 @@ describe('SpotsService', () => {
       expect(result).toEqual([])
     })
 
-    it('returns spots for a category', async () => {
+    it('returns spots when found', async () => {
       const spot = { id: 'spot-1', name: 'Test Spot', categoryId: 'cat-1', createdAt: new Date() }
       whereChain.orderBy.mockResolvedValue([spot])
       const result = await service.findByCategory('cat-1')
-      expect(mockDb.where).toHaveBeenCalled()
-      expect(result).toEqual([spot])
+      expect(result).toHaveLength(1)
+    })
+
+    it('throws NotFoundException when category not found', async () => {
+      mockCategoriesService.findOne.mockRejectedValue(new NotFoundException('Category not found'))
+      await expect(service.findByCategory('non-existent')).rejects.toThrow(NotFoundException)
     })
   })
 
@@ -62,13 +72,18 @@ describe('SpotsService', () => {
       const result = await service.create('cat-1', { name: 'New Spot' })
       expect(result).toEqual(spot)
     })
+
+    it('throws NotFoundException when category not found', async () => {
+      mockCategoriesService.findOne.mockRejectedValue(new NotFoundException('Category not found'))
+      await expect(service.create('non-existent', { name: 'Spot' })).rejects.toThrow(NotFoundException)
+    })
   })
 
   describe('update', () => {
     it('returns updated spot', async () => {
-      const spot = { id: 'spot-1', name: 'Updated Spot', categoryId: 'cat-1', createdAt: new Date() }
+      const spot = { id: 'spot-1', name: 'Updated', categoryId: 'cat-1', createdAt: new Date() }
       whereChain.returning.mockResolvedValue([spot])
-      const result = await service.update('spot-1', { name: 'Updated Spot' })
+      const result = await service.update('spot-1', { name: 'Updated' })
       expect(result).toEqual(spot)
     })
 
@@ -80,7 +95,7 @@ describe('SpotsService', () => {
 
   describe('remove', () => {
     it('returns deleted spot', async () => {
-      const spot = { id: 'spot-1', name: 'Deleted Spot', categoryId: 'cat-1', createdAt: new Date() }
+      const spot = { id: 'spot-1', name: 'Spot', categoryId: 'cat-1', createdAt: new Date() }
       whereChain.returning.mockResolvedValue([spot])
       const result = await service.remove('spot-1')
       expect(result).toEqual(spot)

@@ -5,12 +5,17 @@ import type { DrizzleDB } from '../db/db.module'
 import { spots } from '../db/schema'
 import { CreateSpotDto } from './dto/create-spot.dto'
 import { UpdateSpotDto } from './dto/update-spot.dto'
+import { CategoriesService } from '../categories/categories.service'
 
 @Injectable()
 export class SpotsService {
-  constructor(@Inject(DATABASE) private db: DrizzleDB) {}
+  constructor(
+    @Inject(DATABASE) private db: DrizzleDB,
+    private categoriesService: CategoriesService,
+  ) {}
 
   async findByCategory(categoryId: string) {
+    await this.categoriesService.findOne(categoryId)
     return this.db
       .select()
       .from(spots)
@@ -19,6 +24,7 @@ export class SpotsService {
   }
 
   async create(categoryId: string, dto: CreateSpotDto) {
+    await this.categoriesService.findOne(categoryId)
     const [spot] = await this.db
       .insert(spots)
       .values({ ...dto, categoryId })
