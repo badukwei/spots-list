@@ -2,6 +2,9 @@
 .superpowers/
 .worktrees/
 
+# Claude Code
+.claude/
+
 # Environment variables
 .env
 .env.local
