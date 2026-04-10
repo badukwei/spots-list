@@ -34,3 +34,7 @@
 **`7d9fd11`** — `%` and `_` in search input matched unintended rows via SQL LIKE. Fixed by escaping before passing to `ilike()`.
 
 **`687b275`** — Fixed `import type { DrizzleDB }` in categories.service.ts; `tsc --noEmit` failed with TS1272 due to `isolatedModules` + `emitDecoratorMetadata`.
+
+**`d8d5c7d`** — `findByCategory` and `create` in SpotsService now call `categoriesService.findOne(categoryId)` first, so non-existent category returns 404 instead of `[]` or 500. Required exporting CategoriesService from CategoriesModule and importing CategoriesModule in SpotsModule.
+
+**`be03296`** — Full code review fixes: ParseUUIDPipe on all :id/:categoryId params (prevents 500 on invalid UUID); BadRequestException on empty PATCH body; `@IsUrl({ require_protocol: false })` for mapsUrl; PATCH/DELETE spots routes now include categoryId (`/categories/:categoryId/spots/:id`) for consistency; `createdAt` fields marked `.notNull()` in schema.
