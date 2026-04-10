@@ -11,10 +11,11 @@ export class CategoriesService {
 
   async findAll(q?: string) {
     if (q) {
+      const escaped = q.replace(/[%_\\]/g, '\\$&')
       return this.db
         .select()
         .from(categories)
-        .where(ilike(categories.name, `%${q}%`))
+        .where(ilike(categories.name, `%${escaped}%`))
         .orderBy(categories.createdAt)
     }
     return this.db.select().from(categories).orderBy(categories.createdAt)

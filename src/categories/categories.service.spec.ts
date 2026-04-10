@@ -54,6 +54,12 @@ describe('CategoriesService', () => {
       expect(mockDb.where).toHaveBeenCalled()
       expect(result).toHaveLength(1)
     })
+
+    it('does not throw when query contains LIKE special characters', async () => {
+      whereChain.orderBy.mockResolvedValue([])
+      await expect(service.findAll('50%_off\\deal')).resolves.not.toThrow()
+      expect(mockDb.where).toHaveBeenCalled()
+    })
   })
 
   describe('findOne', () => {
