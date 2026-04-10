@@ -1,3 +1,4 @@
+// src/categories/categories.service.spec.ts
 import { Test, TestingModule } from '@nestjs/testing'
 import { CategoriesService } from './categories.service'
 import { DATABASE } from '../db/db.module'
@@ -6,13 +7,27 @@ import { NotFoundException } from '@nestjs/common'
 describe('CategoriesService', () => {
   let service: CategoriesService
   let mockDb: any
+  let whereChain: any
 
   beforeEach(async () => {
+    // whereChain supports both: await db...where() and db...where().orderBy()/.returning()
+    whereChain = {
+      orderBy: jest.fn().mockResolvedValue([]),
+      returning: jest.fn().mockResolvedValue([]),
+      then: jest.fn((resolve, _reject) => resolve([])),
+    }
+
     mockDb = {
       select: jest.fn().mockReturnThis(),
       from: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockResolvedValue([]),
-      where: jest.fn().mockResolvedValue([]),
+      where: jest.fn().mockReturnValue(whereChain),
+      insert: jest.fn().mockReturnThis(),
+      values: jest.fn().mockReturnThis(),
+      returning: jest.fn().mockResolvedValue([]),
+      update: jest.fn().mockReturnThis(),
+      set: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
     }
 
     const module: TestingModule = await Test.createTestingModule({
@@ -25,14 +40,74 @@ describe('CategoriesService', () => {
     service = module.get<CategoriesService>(CategoriesService)
   })
 
-  it('findAll returns empty array when no categories', async () => {
-    mockDb.orderBy.mockResolvedValue([])
-    const result = await service.findAll()
-    expect(result).toEqual([])
+  describe('findAll', () => {
+    it('returns empty array when no categories', async () => {
+      mockDb.orderBy.mockResolvedValue([])
+      const result = await service.findAll()
+      expect(result).toEqual([])
+    })
+
+    it('calls where with ilike when query is provided', async () => {
+      // findAll(q) chain: .select().from().where().orderBy() — terminal is whereChain.orderBy
+      whereChain.orderBy.mockResolvedValue([{ id: 'uuid-1', name: 'cry place', createdAt: new Date() }])
+      const result = await service.findAll('cry')
+      expect(mockDb.where).toHaveBeenCalled()
+      expect(result).toHaveLength(1)
+    })
   })
 
-  it('findOne throws NotFoundException when not found', async () => {
-    mockDb.where.mockResolvedValue([])
-    await expect(service.findOne('non-existent-id')).rejects.toThrow(NotFoundException)
+  describe('findOne', () => {
+    it('throws NotFoundException when not found', async () => {
+      // findOne chain: .select().from().where() awaited — terminal is whereChain.then
+      whereChain.then.mockImplementation((resolve: any, _reject: any) => resolve([]))
+      await expect(service.findOne('non-existent-id')).rejects.toThrow(NotFoundException)
+    })
+
+    it('returns category when found', async () => {
+      const category = { id: 'uuid-1', name: 'Test', createdAt: new Date() }
+      whereChain.then.mockImplementation((resolve: any, _reject: any) => resolve([category]))
+      const result = await service.findOne('uuid-1')
+      expect(result).toEqual(category)
+    })
+  })
+
+  describe('create', () => {
+    it('returns newly created category', async () => {
+      // create chain: .insert().values().returning() — terminal is mockDb.returning
+      const category = { id: 'uuid-1', name: 'New Category', createdAt: new Date() }
+      mockDb.returning.mockResolvedValue([category])
+      const result = await service.create({ name: 'New Category' })
+      expect(result).toEqual(category)
+    })
+  })
+
+  describe('update', () => {
+    it('returns updated category', async () => {
+      // update chain: .update().set().where().returning() — terminal is whereChain.returning
+      const category = { id: 'uuid-1', name: 'Updated', createdAt: new Date() }
+      whereChain.returning.mockResolvedValue([category])
+      const result = await service.update('uuid-1', { name: 'Updated' })
+      expect(result).toEqual(category)
+    })
+
+    it('throws NotFoundException when category not found', async () => {
+      whereChain.returning.mockResolvedValue([])
+      await expect(service.update('non-existent', { name: 'X' })).rejects.toThrow(NotFoundException)
+    })
+  })
+
+  describe('remove', () => {
+    it('returns deleted category', async () => {
+      // remove chain: .delete().where().returning() — terminal is whereChain.returning
+      const category = { id: 'uuid-1', name: 'Deleted', createdAt: new Date() }
+      whereChain.returning.mockResolvedValue([category])
+      const result = await service.remove('uuid-1')
+      expect(result).toEqual(category)
+    })
+
+    it('throws NotFoundException when category not found', async () => {
+      whereChain.returning.mockResolvedValue([])
+      await expect(service.remove('non-existent')).rejects.toThrow(NotFoundException)
+    })
   })
 })
