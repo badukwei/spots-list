@@ -5,8 +5,7 @@
 ```
 spots-list/
 ├── .claude/            # Claude context (not committed)
-├── .worktrees/
-│   └── backend/        # feature/backend branch (merge pending)
+├── backend/            # NestJS backend
 ├── docs/
 │   └── superpowers/
 │       ├── specs/      # Design docs
@@ -15,16 +14,16 @@ spots-list/
 └── CLAUDE.md
 ```
 
-## Backend (.worktrees/backend/)
+## Backend (backend/)
 
 ```
-src/
+backend/src/
 ├── app.module.ts
-├── main.ts             # (Task 5 - not yet written)
+├── main.ts
 ├── db/
 │   ├── db.module.ts    # Global DbModule: PG_CLIENT + DATABASE tokens
 │   └── schema.ts       # categories, spots tables
-└── categories/
+├── categories/
 │   ├── categories.module.ts
 │   ├── categories.controller.ts
 │   ├── categories.service.ts
@@ -33,7 +32,15 @@ src/
 │   └── dto/
 │       ├── create-category.dto.ts
 │       └── update-category.dto.ts
-└── spots/              # (Task 4 - not yet written)
+└── spots/
+    ├── spots.module.ts
+    ├── spots.controller.ts
+    ├── spots.service.ts
+    ├── spots.controller.spec.ts
+    ├── spots.service.spec.ts
+    └── dto/
+        ├── create-spot.dto.ts
+        └── update-spot.dto.ts
 ```
 
 ## Frontend (not yet started)

@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Spots List — shared anonymous spots-listing app (no auth). Backend: NestJS + Drizzle ORM + Supabase. Frontend: React + Vite (not yet built).
 
-> `backend/` currently lives in `.worktrees/backend/` (branch `feature/backend`, merge pending).
+Run all commands from `backend/`.
 
 ## Commands
 
