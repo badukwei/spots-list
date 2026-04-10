@@ -1,19 +1,19 @@
-import { IsString, IsNotEmpty, IsOptional, IsUrl } from 'class-validator'
+import { IsString, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
 
 export class CreateSpotDto {
   @IsString()
   @IsNotEmpty()
-  name: string
+  name: string;
 
   @IsString()
   @IsOptional()
-  address?: string
+  address?: string;
 
   @IsUrl()
   @IsOptional()
-  mapsUrl?: string
+  mapsUrl?: string;
 
   @IsString()
   @IsOptional()
-  notes?: string
+  notes?: string;
 }

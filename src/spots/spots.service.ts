@@ -1,11 +1,11 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common'
-import { eq } from 'drizzle-orm'
-import { DATABASE } from '../db/db.module'
-import type { DrizzleDB } from '../db/db.module'
-import { spots } from '../db/schema'
-import { CreateSpotDto } from './dto/create-spot.dto'
-import { UpdateSpotDto } from './dto/update-spot.dto'
-import { CategoriesService } from '../categories/categories.service'
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
+import { DATABASE } from '../db/db.module';
+import type { DrizzleDB } from '../db/db.module';
+import { spots } from '../db/schema';
+import { CreateSpotDto } from './dto/create-spot.dto';
+import { UpdateSpotDto } from './dto/update-spot.dto';
+import { CategoriesService } from '../categories/categories.service';
 
 @Injectable()
 export class SpotsService {
@@ -15,21 +15,21 @@ export class SpotsService {
   ) {}
 
   async findByCategory(categoryId: string) {
-    await this.categoriesService.findOne(categoryId)
+    await this.categoriesService.findOne(categoryId);
     return this.db
       .select()
       .from(spots)
       .where(eq(spots.categoryId, categoryId))
-      .orderBy(spots.createdAt)
+      .orderBy(spots.createdAt);
   }
 
   async create(categoryId: string, dto: CreateSpotDto) {
-    await this.categoriesService.findOne(categoryId)
+    await this.categoriesService.findOne(categoryId);
     const [spot] = await this.db
       .insert(spots)
       .values({ ...dto, categoryId })
-      .returning()
-    return spot
+      .returning();
+    return spot;
   }
 
   async update(id: string, dto: UpdateSpotDto) {
@@ -37,17 +37,17 @@ export class SpotsService {
       .update(spots)
       .set(dto)
       .where(eq(spots.id, id))
-      .returning()
-    if (!spot) throw new NotFoundException(`Spot ${id} not found`)
-    return spot
+      .returning();
+    if (!spot) throw new NotFoundException(`Spot ${id} not found`);
+    return spot;
   }
 
   async remove(id: string) {
     const [spot] = await this.db
       .delete(spots)
       .where(eq(spots.id, id))
-      .returning()
-    if (!spot) throw new NotFoundException(`Spot ${id} not found`)
-    return spot
+      .returning();
+    if (!spot) throw new NotFoundException(`Spot ${id} not found`);
+    return spot;
   }
 }
