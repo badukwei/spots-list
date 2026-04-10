@@ -25,6 +25,9 @@ drizzle/
 *.log
 npm-debug.log*
 
+# Test coverage
+coverage/
+
 # OS
 .DS_Store
 
