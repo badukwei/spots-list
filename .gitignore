@@ -3,7 +3,7 @@
 .worktrees/
 
 # Claude Code
-.claude/
+.claude/settings.local.json
 
 # Environment variables
 .env
