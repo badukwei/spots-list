@@ -33,8 +33,14 @@ export function AddCategoryModal({ open, onClose }: Props) {
     onClose()
   }
 
+  const handleClose = () => {
+    reset()
+    addCategory.reset()
+    onClose()
+  }
+
   const handleOpenChange = (open: boolean) => {
-    if (!open) { reset(); onClose() }
+    if (!open) handleClose()
   }
 
   return (
@@ -58,7 +64,7 @@ export function AddCategoryModal({ open, onClose }: Props) {
             <p className="text-xs text-destructive">新增失敗，請再試一次</p>
           )}
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => { reset(); onClose() }} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               取消
             </Button>
             <Button type="submit" disabled={isSubmitting}>
