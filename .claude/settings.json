@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // empty'); [[ \"$f\" == *.ts ]] && cd /Users/linwgpeter/dev/side-projects/spots-list/.worktrees/backend && npx tsc --noEmit 2>&1 | head -20 || true"
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); [[ \"$f\" == *.ts || \"$f\" == *.tsx || \"$f\" == *tsconfig*.json ]] && d=\"$f\" && while [[ \"$d\" != \"/\" ]]; do d=$(dirname \"$d\"); if [[ -f \"$d/tsconfig.json\" ]]; then cd \"$d\" && npx tsc --noEmit 2>&1 | head -20; break; fi; done || true"
           },
           {
             "type": "agent",
