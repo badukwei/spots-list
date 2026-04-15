@@ -149,5 +149,47 @@ describe('SpotsService', () => {
         NotFoundException,
       );
     });
+
+    // Cross-category isolation: remove propagates category NotFoundException
+    it('throws NotFoundException when category not found', async () => {
+      mockCategoriesService.findOne.mockRejectedValue(
+        new NotFoundException('Category not found'),
+      );
+      await expect(service.remove('non-existent-cat', 'spot-1')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
+  // NOTE: update() and remove() filter spots only by spot id, NOT by (categoryId, id).
+  // A spot belonging to a different category can be mutated or deleted if its id is known.
+  // These tests document the current (unguarded) behaviour so a future fix is detectable.
+  describe('cross-category isolation gap (documented behaviour)', () => {
+    it('update: modifies a spot even when it belongs to a different category', async () => {
+      // spot-99 belongs to cat-99, but we call update with cat-1
+      const spotFromAnotherCategory = {
+        id: 'spot-99',
+        name: 'Updated',
+        categoryId: 'cat-99',
+        createdAt: new Date(),
+      };
+      whereChain.returning.mockResolvedValue([spotFromAnotherCategory]);
+      // Should ideally throw, but currently succeeds
+      const result = await service.update('cat-1', 'spot-99', { name: 'Updated' });
+      expect(result).toEqual(spotFromAnotherCategory);
+    });
+
+    it('remove: deletes a spot even when it belongs to a different category', async () => {
+      const spotFromAnotherCategory = {
+        id: 'spot-99',
+        name: 'Spot',
+        categoryId: 'cat-99',
+        createdAt: new Date(),
+      };
+      whereChain.returning.mockResolvedValue([spotFromAnotherCategory]);
+      // Should ideally throw, but currently succeeds
+      const result = await service.remove('cat-1', 'spot-99');
+      expect(result).toEqual(spotFromAnotherCategory);
+    });
   });
 });
