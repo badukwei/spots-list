@@ -11,7 +11,7 @@ export class CreateSpotDto {
   @MaxLength(200)
   address?: string;
 
-  @IsUrl({ require_protocol: false })
+  @IsUrl()
   @IsOptional()
   @MaxLength(500)
   mapsUrl?: string;

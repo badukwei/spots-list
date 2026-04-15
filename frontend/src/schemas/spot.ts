@@ -6,10 +6,7 @@ export const spotSchema = z.object({
   mapsUrl: z
     .string()
     .max(500)
-    .refine(
-      (val) => val === '' || /^(https?:\/\/)?[\w\-.]+(\/.*)?$/.test(val),
-      { message: '請輸入有效的網址' }
-    )
+    .url('請輸入有效的網址（需包含 https://）')
     .optional()
     .or(z.literal('')),
   notes: z.string().max(500, '備註不能超過 500 字').optional().or(z.literal('')),

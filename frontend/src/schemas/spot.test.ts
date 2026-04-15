@@ -15,8 +15,8 @@ describe('spotSchema', () => {
     expect(spotSchema.safeParse({ name: 'test', mapsUrl: 'https://maps.google.com/abc' }).success).toBe(true)
   })
 
-  it('accepts mapsUrl without protocol', () => {
-    expect(spotSchema.safeParse({ name: 'test', mapsUrl: 'maps.google.com/abc' }).success).toBe(true)
+  it('rejects mapsUrl without protocol', () => {
+    expect(spotSchema.safeParse({ name: 'test', mapsUrl: 'maps.google.com/abc' }).success).toBe(false)
   })
 
   it('rejects notes over 500 chars', () => {
