@@ -15,7 +15,7 @@ export function useCategories(search?: string) {
 
 export function useCategory(id: string) {
   return useQuery({
-    queryKey: ['categories', id],
+    queryKey: ['category', id],
     queryFn: async () => {
       const { data } = await api.get<Category>(`/categories/${id}`)
       return data
