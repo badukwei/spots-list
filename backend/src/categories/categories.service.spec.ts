@@ -94,6 +94,18 @@ describe('CategoriesService', () => {
       const result = await service.create({ name: 'New Category' });
       expect(result).toEqual(category);
     });
+
+    // NOTE: CreateCategoryDto has no @MaxLength decorator, so the backend currently accepts
+    // names longer than 100 chars even though the frontend schema rejects them.
+    // This test documents that the service itself does NOT enforce a length limit.
+    it('does not enforce max-length on name (DTO gap — backend accepts oversized input)', async () => {
+      const longName = 'a'.repeat(200);
+      const category = { id: 'uuid-1', name: longName, createdAt: new Date() };
+      mockDb.returning.mockResolvedValue([category]);
+      const result = await service.create({ name: longName });
+      // If @MaxLength were enforced at service level this would throw; currently it returns.
+      expect(result.name).toHaveLength(200);
+    });
   });
 
   describe('update', () => {
