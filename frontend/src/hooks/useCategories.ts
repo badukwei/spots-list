@@ -13,13 +13,14 @@ export function useCategories(search?: string) {
   })
 }
 
-export function useCategory(id: string) {
+export function useCategory(id: string | undefined) {
   return useQuery({
     queryKey: ['category', id],
     queryFn: async () => {
       const { data } = await api.get<Category>(`/categories/${id}`)
       return data
     },
+    enabled: !!id,
   })
 }
 

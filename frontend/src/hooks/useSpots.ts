@@ -3,13 +3,14 @@ import api from '@/lib/api'
 import type { Spot } from '@/types'
 import type { SpotFormValues } from '@/schemas/spot'
 
-export function useSpots(categoryId: string) {
+export function useSpots(categoryId: string | undefined) {
   return useQuery({
     queryKey: ['spots', categoryId],
     queryFn: async () => {
       const { data } = await api.get<Spot[]>(`/categories/${categoryId}/spots`)
       return data
     },
+    enabled: !!categoryId,
   })
 }
 

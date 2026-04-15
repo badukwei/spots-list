@@ -16,8 +16,8 @@ export function CategoryDetailPage() {
   const [addOpen, setAddOpen] = useState(false)
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null)
 
-  const { data: category, isLoading: catLoading, error: catError } = useCategory(id!)
-  const { data: spots, isLoading: spotsLoading, error: spotsError } = useSpots(id!)
+  const { data: category, isLoading: catLoading, error: catError } = useCategory(id)
+  const { data: spots, isLoading: spotsLoading, error: spotsError } = useSpots(id)
 
   useEffect(() => {
     if (catError) navigate('/', { replace: true })
