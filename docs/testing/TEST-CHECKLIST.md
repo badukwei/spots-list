@@ -1,15 +1,39 @@
 # Spots List 測試清單
 
 > 測試兩輪：**手動測試**（瀏覽器操作）+ **自動測試**（`/qa-only` gstack）
+
+## 前置條件（所有測試）
+
+### 1. 啟動服務
+
+```bash
+# Terminal 1
+cd backend && npm run start:dev   # port 3001
+
+# Terminal 2
+cd frontend && npm run dev        # port 5173
+```
+
+### 2. 自動測試前：開啟 sandbox localhost 權限
+
+`/qa-only` 需要 Claude Code 能連到 `localhost`。測試前暫時將以下加入 `~/.claude/settings.json`：
+
+```json
+"network": {
+  "allowedDomains": [
+    "localhost",
+    "127.0.0.1",
+    "github.com",
+    "*.github.com",
+    "registry.npmjs.org",
+    "*.npmjs.org"
+  ]
+}
+```
+
+> **注意：** 開啟後 Claude 可以連到本機所有服務。測試結束後移除 `localhost` 和 `127.0.0.1` 兩行。
 >
-> **前置條件（所有測試）**
-> ```bash
-> # Terminal 1
-> cd backend && npm run start:dev   # port 3001
->
-> # Terminal 2
-> cd frontend && npm run dev        # port 5173
-> ```
+> **替代方案：** 不改設定，自己在 terminal 跑 `/qa-only`，把結果貼給 Claude 分析。
 
 ---
 
