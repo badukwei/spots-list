@@ -719,6 +719,107 @@ curl -s -X POST "http://localhost:3001/categories/$CATEGORY_ID/spots" \
 
 ---
 
+## DB 驗證（Supabase Dashboard）
+
+每次做完新增 / 修改 / 刪除操作後，到 Supabase Dashboard 確認資料庫狀態。
+
+### 進入方式
+1. 開啟 [supabase.com](https://supabase.com) → 登入 → 選擇 spots-list 專案
+2. 左側選單 → **Table Editor**
+3. 選擇要查的 table：`categories` 或 `spots`
+
+---
+
+### DB-01：新增分類後確認
+
+**觸發時機：** TC-02 新增分類成功後
+
+**在 Table Editor 檢查 `categories` table：**
+1. 確認新增的分類出現在列表
+2. 確認欄位值正確：
+
+| 欄位 | 預期 |
+|------|------|
+| `id` | UUID 格式（e.g. `550e8400-e29b-41d4-a716-446655440000`） |
+| `name` | 與前端輸入一致 |
+| `created_at` | 當前時間（UTC） |
+
+---
+
+### DB-02：新增景點後確認
+
+**觸發時機：** TC-06 新增景點成功後
+
+**在 Table Editor 檢查 `spots` table：**
+1. 確認新增的景點出現在列表
+2. 確認欄位值正確：
+
+| 欄位 | 預期 |
+|------|------|
+| `id` | UUID 格式 |
+| `category_id` | 與所在分類的 UUID 一致 |
+| `name` | 與前端輸入一致 |
+| `address` | 有填則顯示，未填則為 `NULL` |
+| `maps_url` | 有填則顯示，未填則為 `NULL` |
+| `notes` | 有填則顯示，未填則為 `NULL` |
+| `created_at` | 當前時間（UTC） |
+
+---
+
+### DB-03：選填欄位留空時確認 NULL
+
+**觸發時機：** TC-06 只填名稱、其他欄位留空後
+
+**在 `spots` table 確認：**
+- `address`、`maps_url`、`notes` 欄位值為 `NULL`（不是空字串 `""`）
+
+> **為什麼重要：** frontend hook 在送出前將空字串轉成 `undefined`（不帶欄位），後端收到後存為 `NULL`。若出現空字串代表轉換邏輯有誤。
+
+---
+
+### DB-04：外鍵關聯確認
+
+**觸發時機：** 新增景點後
+
+**在 `spots` table 確認：**
+- `category_id` 的值在 `categories` table 中存在
+- Supabase Table Editor 可點擊 `category_id` 欄位旁的外鍵圖示跳轉確認
+
+---
+
+### DB-05：cascade delete 確認
+
+**觸發時機：** 刪除分類後（需透過 API 直接測試，前端目前無刪除 UI）
+
+```bash
+# 先建立分類和景點
+CAT_ID=$(curl -s -X POST http://localhost:3001/categories \
+  -H "Content-Type: application/json" \
+  -d '{"name":"要刪除的分類"}' | jq -r '.id')
+
+curl -s -X POST "http://localhost:3001/categories/$CAT_ID/spots" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"這個景點應該一起消失"}' | jq .
+
+# 刪除分類
+curl -s -X DELETE "http://localhost:3001/categories/$CAT_ID" | jq .
+```
+
+**在 `spots` table 確認：**
+- 剛才新增的景點已消失（`category_id` 設有 `ON DELETE CASCADE`）
+- `categories` table 中該分類也不見了
+
+---
+
+### Pass / Fail
+- [ ] DB-01 新增分類欄位正確
+- [ ] DB-02 新增景點欄位正確
+- [ ] DB-03 選填欄位存為 NULL
+- [ ] DB-04 外鍵關聯正確
+- [ ] DB-05 cascade delete 正常
+
+---
+
 ## 自動化測試執行（/qa-only）
 
 當 frontend + backend 都在跑時，用 `/qa-only` 做完整 UI 測試：
