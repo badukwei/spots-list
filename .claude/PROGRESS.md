@@ -25,25 +25,7 @@
 - [x] Task 13: CategoryDetailPage + routing
 - [ ] **TODO: Delete UI (categories + spots)** — must use soft delete (`deletedAt` column); do not build until soft delete schema migration is done
 
-## Integration Testing Plan (Phase 2)
-
-- [ ] Not started — local frontend + backend testing together
-
-## Soft Delete Plan (Phase 2.5)
-
-- [ ] Not started
-- Backend: add `deletedAt` timestamp to `categories` + `spots` schema; filter out in all queries; migration via `drizzle-kit push`
-- Frontend: delete UI for categories + spots (trigger soft delete, not hard delete)
-- Tests: unit tests for filtered queries + delete endpoints
-
-## Emoji Schema Migration (Phase 2.4) — prerequisite for UI redesign
-
-- [ ] Backend: add `emoji` nullable text field to `categories` Drizzle schema
-- [ ] Backend: update `CreateCategoryDto` + `UpdateCategoryDto` to accept optional `emoji`
-- [ ] Backend: `drizzle-kit push` to Supabase
-- [ ] Backend: update unit tests
-
-## UI Redesign Plan (Phase 2.6) — spec: docs/superpowers/specs/2026-04-23-ui-redesign-design.md
+## UI Redesign Plan (Phase 2.1) — spec: docs/superpowers/specs/2026-04-23-ui-redesign-design.md
 
 - [ ] Not started
 - Full redesign: light/bright Instagram-inspired. App renamed to **地點找找看**
@@ -51,7 +33,26 @@
 - Desktop: sticky header + sidebar (categories) + 3-col spot grid
 - Mobile: stories-style category row + 2-col grid
 - Spot thumbnails: color gradient mock (no real image)
-- Emoji: use `emoji` field if present, else auto-assign by index
+- Emoji: auto-assign by index (mock) until Phase 2.2 schema migration lands
+
+## Emoji Schema Migration (Phase 2.2)
+
+- [ ] Backend: add `emoji` nullable text field to `categories` Drizzle schema
+- [ ] Backend: update `CreateCategoryDto` + `UpdateCategoryDto` to accept optional `emoji`
+- [ ] Backend: `drizzle-kit push` to Supabase
+- [ ] Backend: update unit tests
+- [ ] Frontend: wire up real `emoji` field (replace auto-assign mock)
+
+## Integration Testing Plan (Phase 2.3)
+
+- [ ] Not started — local frontend + backend testing together
+
+## Soft Delete Plan (Phase 2.4)
+
+- [ ] Not started
+- Backend: add `deletedAt` timestamp to `categories` + `spots` schema; filter out in all queries; migration via `drizzle-kit push`
+- Frontend: delete UI for categories + spots (trigger soft delete, not hard delete)
+- Tests: unit tests for filtered queries + delete endpoints
 
 ## Backend Security Plan (Phase 3)
 
