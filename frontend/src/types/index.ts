@@ -3,6 +3,7 @@ export interface Category {
   name: string
   emoji: string | null
   createdAt: string
+  deletedAt: string | null
 }
 
 export interface Spot {
@@ -13,4 +14,5 @@ export interface Spot {
   mapsUrl: string | null
   notes: string | null
   createdAt: string
+  deletedAt: string | null
 }

@@ -32,3 +32,16 @@ export function useAddSpot(categoryId: string) {
     },
   })
 }
+
+export function useDeleteSpot(categoryId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await api.delete<Spot>(`/categories/${categoryId}/spots/${id}`)
+      return data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['spots', categoryId] })
+    },
+  })
+}
