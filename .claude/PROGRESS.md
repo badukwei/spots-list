@@ -66,7 +66,7 @@
 - [x] Backend: all queries filter `isNull(deletedAt)`; remove() soft-deletes (no hard delete)
 - [x] Backend: category remove also soft-deletes all spots in category
 - [x] Backend: unit tests updated (soft-delete assertions)
-- [x] Backend: `drizzle-kit push` to Supabase — **TODO: user must run**
+- [x] Backend: `drizzle-kit push` to Supabase
 - [x] Frontend: `useDeleteCategory` + `useDeleteSpot` hooks
 - [x] Frontend: `ConfirmDialog` component
 - [x] Frontend: trash button (hover) on CategoryCard, CategoryListItem, SpotCard, SpotListItem
@@ -76,11 +76,21 @@
 
 ## Backend Security Plan (Phase 3)
 
-- [ ] Not started
-- Items: @nestjs/throttler rate limiting, Helmet headers, body size limit (10kb)
-- Items: Pagination on all list endpoints (default 20, max 100)
-- Items: Field length validation (name ≤ 100, notes ≤ 500, address ≤ 200, search ≤ 100)
-- Items: Tests for all above
+### Phase 3a: Security hardening — COMPLETE (branch: phase-3-backend-security)
+
+- [x] Helmet security headers (main.ts)
+- [x] Body size limit 10kb (main.ts)
+- [x] Search query MaxLength(100) via SearchCategoryDto + PaginationDto
+- [x] Rate limiting: `long` TTL 60s limit 20 + `short` TTL 3s limit 1 (burst)
+- [x] E2e tests for rate limiting (test/throttler.e2e-spec.ts)
+- [x] Fix stale app.e2e-spec.ts scaffold test
+
+### Phase 3b: Pagination — IN PROGRESS (branch: phase-3-pagination)
+
+- [x] Task 29: Backend categories pagination — `GET /categories` returns `{ data, total, page, limit, totalPages }`; PaginationDto created
+- [ ] Task 30: Backend spots pagination — `GET /categories/:id/spots` same format
+- [ ] Task 31: Frontend PaginatedResponse type + update useCategories/useSpots hooks
+- [ ] Task 32: Frontend pagination UI (HomePage + CategoryDetailPage)
 
 ## Deployment Plan (Phase 4)
 
