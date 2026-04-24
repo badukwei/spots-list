@@ -1,12 +1,11 @@
+// frontend/src/pages/HomePage.tsx
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCategories } from '@/hooks/useCategories'
 import { CategoryCard } from '@/components/CategoryCard'
-import { CategoryListItem } from '@/components/CategoryListItem'
 import { AddCategoryModal } from '@/components/AddCategoryModal'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/hooks/useDebounce'
+import { getAutoEmoji, getCategoryColor } from '@/lib/emoji'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -22,64 +21,105 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-          <h1 className="font-display italic text-xl text-foreground tracking-tight">Spots List</h1>
-          <Button size="sm" onClick={() => setAddOpen(true)}>
-            + 新增分類
-          </Button>
+      {/* Header */}
+      <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+          <h1 className="text-xl font-extrabold tracking-tight text-foreground">
+            地點<span className="text-primary">找找</span>看
+          </h1>
+          {/* Desktop: search pill */}
+          <div className="hidden md:flex flex-1 max-w-xs">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="🔍 搜尋分類…"
+              className="w-full rounded-full bg-muted px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          <button
+            onClick={() => setAddOpen(true)}
+            className="rounded-full bg-foreground px-4 py-2 text-xs font-semibold text-background hover:bg-foreground/80 transition-colors"
+          >
+            ＋ 新增分類
+          </button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-4 py-6">
-        <Input
-          placeholder="搜尋分類..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="mb-6"
-        />
+      <main className="mx-auto max-w-5xl px-4 py-5">
+        {/* Mobile: stories row */}
+        {categories && categories.length > 0 && (
+          <div className="mb-4 -mx-4 md:hidden">
+            <div className="flex gap-4 overflow-x-auto px-4 pb-2 scrollbar-none">
+              <button
+                onClick={() => setAddOpen(true)}
+                className="flex flex-col items-center gap-1.5 flex-shrink-0"
+              >
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-border text-2xl text-muted-foreground">
+                  ＋
+                </div>
+                <span className="w-14 text-center text-[10px] text-muted-foreground leading-tight">新增分類</span>
+              </button>
+              {categories.map((cat, i) => {
+                const color = getCategoryColor(i)
+                const emoji = getAutoEmoji(i)
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => handleCategoryClick(cat.id)}
+                    className="flex flex-col items-center gap-1.5 flex-shrink-0"
+                  >
+                    <div
+                      className="flex h-14 w-14 items-center justify-center rounded-full border-2 text-2xl"
+                      style={{ borderColor: color.text, background: color.bg }}
+                    >
+                      {emoji}
+                    </div>
+                    <span className="w-14 text-center text-[10px] text-foreground leading-tight line-clamp-2">
+                      {cat.name}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
+        {/* Mobile: search bar */}
+        <div className="mb-4 md:hidden">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="搜尋分類…"
+            className="w-full rounded-xl bg-muted px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+
+        {/* States */}
         {isLoading && (
-          <p className="text-center text-sm text-muted-foreground py-12">載入中...</p>
+          <p className="py-12 text-center text-sm text-muted-foreground">載入中…</p>
         )}
-
         {error && (
-          <p className="text-center text-sm text-destructive py-12">載入失敗，請重新整理</p>
+          <p className="py-12 text-center text-sm text-destructive">載入失敗，請重新整理</p>
         )}
-
         {categories && categories.length === 0 && (
-          <p className="text-center text-sm text-muted-foreground py-12">
+          <p className="py-12 text-center text-sm text-muted-foreground">
             {search ? '找不到符合的分類' : '還沒有分類，來新增第一個吧！'}
           </p>
         )}
 
+        {/* Category grid */}
         {categories && categories.length > 0 && (
-          <>
-            {/* Desktop: grid */}
-            <div className="hidden gap-3 md:grid md:grid-cols-2 lg:grid-cols-3">
-              {categories.map((cat, i) => (
-                <div key={cat.id} className="animate-fade-up" style={{ animationDelay: `${i * 60}ms` }}>
-                  <CategoryCard
-                    category={cat}
-                    index={i + 1}
-                    onClick={() => handleCategoryClick(cat.id)}
-                  />
-                </div>
-              ))}
-            </div>
-            {/* Mobile: list */}
-            <div className="flex flex-col gap-2 md:hidden">
-              {categories.map((cat, i) => (
-                <div key={cat.id} className="animate-fade-up" style={{ animationDelay: `${i * 60}ms` }}>
-                  <CategoryListItem
-                    category={cat}
-                    index={i + 1}
-                    onClick={() => handleCategoryClick(cat.id)}
-                  />
-                </div>
-              ))}
-            </div>
-          </>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+            {categories.map((cat, i) => (
+              <div key={cat.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
+                <CategoryCard
+                  category={cat}
+                  index={i}
+                  onClick={() => handleCategoryClick(cat.id)}
+                />
+              </div>
+            ))}
+          </div>
         )}
       </main>
 
