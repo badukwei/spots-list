@@ -10,7 +10,7 @@ interface Props {
 
 export function CategoryCard({ category, index, onClick }: Props) {
   const color = getCategoryColor(index)
-  const emoji = getAutoEmoji(index)
+  const emoji = category.emoji ?? getAutoEmoji(index)
 
   return (
     <button

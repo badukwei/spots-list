@@ -11,7 +11,7 @@ interface Props {
 
 export function CategoryListItem({ category, index, isActive, onClick }: Props) {
   const color = getCategoryColor(index)
-  const emoji = getAutoEmoji(index)
+  const emoji = category.emoji ?? getAutoEmoji(index)
 
   return (
     <button
