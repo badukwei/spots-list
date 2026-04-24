@@ -10,6 +10,24 @@ describe('SpotsService', () => {
   let whereChain: any;
   let mockCategoriesService: any;
 
+  // Helper to set up select mock for count + data calls
+  function mockSelectForFindByCategory(total: number, data: any[]) {
+    const countChain = {
+      from: jest.fn().mockReturnThis(),
+      where: jest.fn().mockResolvedValue([{ total }]),
+    };
+    const dataChain = {
+      from: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      offset: jest.fn().mockResolvedValue(data),
+    };
+    mockDb.select
+      .mockReturnValueOnce(countChain)
+      .mockReturnValueOnce(dataChain);
+  }
+
   beforeEach(async () => {
     whereChain = {
       orderBy: jest.fn().mockResolvedValue([]),
@@ -51,10 +69,10 @@ describe('SpotsService', () => {
   });
 
   describe('findByCategory', () => {
-    it('returns empty array when no spots', async () => {
-      whereChain.orderBy.mockResolvedValue([]);
-      const result = await service.findByCategory('cat-1');
-      expect(result).toEqual([]);
+    it('returns empty paginated result when no spots', async () => {
+      mockSelectForFindByCategory(0, []);
+      const result = await service.findByCategory('cat-1', 1, 20);
+      expect(result).toEqual({ data: [], total: 0, page: 1, limit: 20, totalPages: 0 });
     });
 
     it('returns spots when found', async () => {
@@ -65,16 +83,20 @@ describe('SpotsService', () => {
         deletedAt: null,
         createdAt: new Date(),
       };
-      whereChain.orderBy.mockResolvedValue([spot]);
-      const result = await service.findByCategory('cat-1');
-      expect(result).toHaveLength(1);
+      mockSelectForFindByCategory(1, [spot]);
+      const result = await service.findByCategory('cat-1', 1, 20);
+      expect(result.data).toHaveLength(1);
+      expect(result.total).toBe(1);
+      expect(result.page).toBe(1);
+      expect(result.limit).toBe(20);
+      expect(result.totalPages).toBe(1);
     });
 
     it('throws NotFoundException when category not found', async () => {
       mockCategoriesService.findOne.mockRejectedValue(
         new NotFoundException('Category not found'),
       );
-      await expect(service.findByCategory('non-existent')).rejects.toThrow(
+      await expect(service.findByCategory('non-existent', 1, 20)).rejects.toThrow(
         NotFoundException,
       );
     });

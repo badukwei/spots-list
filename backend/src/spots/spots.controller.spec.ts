@@ -8,7 +8,7 @@ describe('SpotsController', () => {
   let controller: SpotsController;
 
   const mockService = {
-    findByCategory: jest.fn().mockResolvedValue([]),
+    findByCategory: jest.fn().mockResolvedValue({ data: [], total: 0, page: 1, limit: 20, totalPages: 0 }),
     create: jest
       .fn()
       .mockResolvedValue({ id: 'spot-1', name: 'Spot', categoryId: 'cat-1' }),
@@ -25,10 +25,10 @@ describe('SpotsController', () => {
     controller = module.get<SpotsController>(SpotsController);
   });
 
-  it('findByCategory calls service with categoryId', async () => {
-    const result = await controller.findByCategory('cat-1');
-    expect(mockService.findByCategory).toHaveBeenCalledWith('cat-1');
-    expect(result).toEqual([]);
+  it('findByCategory calls service with categoryId and pagination', async () => {
+    const result = await controller.findByCategory('cat-1', { page: 1, limit: 20 });
+    expect(mockService.findByCategory).toHaveBeenCalledWith('cat-1', 1, 20);
+    expect(result).toEqual({ data: [], total: 0, page: 1, limit: 20, totalPages: 0 });
   });
 
   it('create calls service with categoryId and dto', async () => {

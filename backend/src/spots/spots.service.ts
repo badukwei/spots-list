@@ -4,7 +4,7 @@ import {
   Inject,
   NotFoundException,
 } from '@nestjs/common';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 import { DATABASE } from '../db/db.module';
 import type { DrizzleDB } from '../db/db.module';
 import { spots } from '../db/schema';
@@ -19,13 +19,25 @@ export class SpotsService {
     private categoriesService: CategoriesService,
   ) {}
 
-  async findByCategory(categoryId: string) {
+  async findByCategory(categoryId: string, page = 1, limit = 20) {
     await this.categoriesService.findOne(categoryId);
-    return this.db
+    const offset = (page - 1) * limit;
+    const where = and(eq(spots.categoryId, categoryId), isNull(spots.deletedAt));
+
+    const [{ total }] = await this.db
+      .select({ total: sql<number>`cast(count(*) as int)` })
+      .from(spots)
+      .where(where);
+
+    const data = await this.db
       .select()
       .from(spots)
-      .where(and(eq(spots.categoryId, categoryId), isNull(spots.deletedAt)))
-      .orderBy(spots.createdAt);
+      .where(where)
+      .orderBy(spots.createdAt)
+      .limit(limit)
+      .offset(offset);
+
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   async create(categoryId: string, dto: CreateSpotDto) {

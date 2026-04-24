@@ -7,18 +7,23 @@ import {
   Body,
   Param,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { SpotsService } from './spots.service';
 import { CreateSpotDto } from './dto/create-spot.dto';
 import { UpdateSpotDto } from './dto/update-spot.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Controller()
 export class SpotsController {
   constructor(private readonly spotsService: SpotsService) {}
 
   @Get('categories/:categoryId/spots')
-  findByCategory(@Param('categoryId', ParseUUIDPipe) categoryId: string) {
-    return this.spotsService.findByCategory(categoryId);
+  findByCategory(
+    @Param('categoryId', ParseUUIDPipe) categoryId: string,
+    @Query() query: PaginationDto,
+  ) {
+    return this.spotsService.findByCategory(categoryId, query.page, query.limit);
   }
 
   @Post('categories/:categoryId/spots')
