@@ -26,12 +26,12 @@ describe('CategoriesController', () => {
   });
 
   it('findAll calls service.findAll without query', async () => {
-    await controller.findAll(undefined);
+    await controller.findAll({});
     expect(mockService.findAll).toHaveBeenCalledWith(undefined);
   });
 
   it('findAll calls service.findAll with query', async () => {
-    await controller.findAll('cry');
+    await controller.findAll({ q: 'cry' });
     expect(mockService.findAll).toHaveBeenCalledWith('cry');
   });
 

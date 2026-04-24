@@ -12,14 +12,15 @@ import {
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { SearchCategoryDto } from './dto/search-category.dto';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  findAll(@Query('q') q?: string) {
-    return this.categoriesService.findAll(q);
+  findAll(@Query() query: SearchCategoryDto) {
+    return this.categoriesService.findAll(query.q);
   }
 
   @Get(':id')
