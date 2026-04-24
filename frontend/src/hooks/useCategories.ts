@@ -36,3 +36,17 @@ export function useAddCategory() {
     },
   })
 }
+
+export function useUpdateCategory() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, name, emoji }: { id: string; name?: string; emoji?: string }) => {
+      const { data } = await api.patch<Category>(`/categories/${id}`, { name, emoji })
+      return data
+    },
+    onSuccess: (data) => {
+      void queryClient.invalidateQueries({ queryKey: ['categories'] })
+      void queryClient.invalidateQueries({ queryKey: ['category', data.id] })
+    },
+  })
+}

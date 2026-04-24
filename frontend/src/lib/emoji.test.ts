@@ -8,7 +8,7 @@ describe('getAutoEmoji', () => {
     expect(getAutoEmoji(0).length).toBeGreaterThan(0)
   })
   it('wraps around after palette length', () => {
-    expect(getAutoEmoji(0)).toBe(getAutoEmoji(10))
+    expect(getAutoEmoji(0)).toBe(getAutoEmoji(63))
   })
 })
 
