@@ -1,25 +1,43 @@
+// frontend/src/components/CategoryListItem.tsx
 import type { Category } from '@/types'
-import { ChevronRight } from 'lucide-react'
+import { getAutoEmoji, getCategoryColor } from '@/lib/emoji'
 
 interface Props {
   category: Category
   index: number
+  isActive: boolean
   onClick: () => void
 }
 
-export function CategoryListItem({ category, index, onClick }: Props) {
+export function CategoryListItem({ category, index, isActive, onClick }: Props) {
+  const color = getCategoryColor(index)
+  const emoji = getAutoEmoji(index)
+
   return (
     <button
       onClick={onClick}
-      className="group w-full flex items-center gap-4 rounded-lg border border-border bg-card px-4 py-3.5 hover:border-primary/40 hover:bg-muted/60 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className={[
+        'group relative flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        isActive ? 'bg-accent' : 'hover:bg-muted',
+      ].join(' ')}
     >
-      <span className="text-[10px] font-medium tracking-widest text-muted-foreground w-5 shrink-0">
-        {String(index).padStart(2, '0')}
-      </span>
-      <span className="font-display italic text-base text-foreground group-hover:text-primary transition-colors duration-200 flex-1 text-left">
+      {isActive && (
+        <span className="absolute left-0 top-0 h-full w-0.5 rounded-r bg-primary" />
+      )}
+      <div
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base"
+        style={{ background: color.bg }}
+      >
+        {emoji}
+      </div>
+      <span
+        className={[
+          'truncate text-sm font-medium',
+          isActive ? 'text-primary' : 'text-foreground group-hover:text-foreground',
+        ].join(' ')}
+      >
         {category.name}
       </span>
-      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200 shrink-0" />
     </button>
   )
 }
