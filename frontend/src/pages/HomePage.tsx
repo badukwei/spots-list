@@ -1,10 +1,11 @@
 // frontend/src/pages/HomePage.tsx
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useCategories } from '@/hooks/useCategories'
+import { useCategories, useDeleteCategory } from '@/hooks/useCategories'
 import { CategoryCard } from '@/components/CategoryCard'
 import { AddCategoryModal } from '@/components/AddCategoryModal'
 import { EditCategoryModal } from '@/components/EditCategoryModal'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { useDebounce } from '@/hooks/useDebounce'
 import { getAutoEmoji, getCategoryColor } from '@/lib/emoji'
 import type { Category } from '@/types'
@@ -14,7 +15,9 @@ export function HomePage() {
   const [search, setSearch] = useState('')
   const [addOpen, setAddOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
   const debouncedSearch = useDebounce(search, 300)
+  const deleteCategory = useDeleteCategory()
   const { data: categories, isLoading, error } = useCategories(debouncedSearch || undefined)
 
   const handleCategoryClick = useCallback(
@@ -120,6 +123,7 @@ export function HomePage() {
                   index={i}
                   onClick={() => handleCategoryClick(cat.id)}
                   onEdit={() => setEditingCategory(cat)}
+                  onDelete={() => setDeletingCategory(cat)}
                 />
               </div>
             ))}
@@ -129,6 +133,19 @@ export function HomePage() {
 
       <AddCategoryModal open={addOpen} onClose={() => setAddOpen(false)} />
       <EditCategoryModal category={editingCategory} onClose={() => setEditingCategory(null)} />
+      <ConfirmDialog
+        open={deletingCategory !== null}
+        title="刪除分類"
+        description={`確定要刪除「${deletingCategory?.name}」嗎？底下的地點也會一起刪除。`}
+        onConfirm={async () => {
+          if (deletingCategory) {
+            await deleteCategory.mutateAsync(deletingCategory.id)
+            setDeletingCategory(null)
+          }
+        }}
+        onClose={() => setDeletingCategory(null)}
+        isLoading={deleteCategory.isPending}
+      />
     </div>
   )
 }

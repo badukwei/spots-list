@@ -1,5 +1,5 @@
 // frontend/src/components/SpotListItem.tsx
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Trash2 } from 'lucide-react'
 import type { Spot } from '@/types'
 import { getSpotGradient } from '@/lib/emoji'
 
@@ -7,9 +7,10 @@ interface Props {
   spot: Spot
   index: number
   onClick: () => void
+  onDelete?: () => void
 }
 
-export function SpotListItem({ spot, index, onClick }: Props) {
+export function SpotListItem({ spot, index, onClick, onDelete }: Props) {
   const gradient = getSpotGradient(index)
 
   return (
@@ -31,6 +32,16 @@ export function SpotListItem({ spot, index, onClick }: Props) {
           </p>
         )}
       </div>
+      {onDelete && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onDelete() }}
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="刪除地點"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      )}
       <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors duration-150" />
     </button>
   )

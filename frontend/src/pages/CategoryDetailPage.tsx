@@ -2,14 +2,15 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
-import { useCategories, useCategory } from '@/hooks/useCategories'
-import { useSpots } from '@/hooks/useSpots'
+import { useCategories, useCategory, useDeleteCategory } from '@/hooks/useCategories'
+import { useSpots, useDeleteSpot } from '@/hooks/useSpots'
 import { CategoryListItem } from '@/components/CategoryListItem'
 import { SpotCard } from '@/components/SpotCard'
 import { SpotListItem } from '@/components/SpotListItem'
 import { AddSpotModal } from '@/components/AddSpotModal'
 import { SpotDetailModal } from '@/components/SpotDetailModal'
 import { EditCategoryModal } from '@/components/EditCategoryModal'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import type { Spot, Category } from '@/types'
 
 export function CategoryDetailPage() {
@@ -18,10 +19,14 @@ export function CategoryDetailPage() {
   const [addOpen, setAddOpen] = useState(false)
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
+  const [deletingSpot, setDeletingSpot] = useState<Spot | null>(null)
 
   const { data: allCategories } = useCategories()
   const { data: category, isLoading: catLoading, error: catError } = useCategory(id)
   const { data: spots, isLoading: spotsLoading, error: spotsError } = useSpots(id)
+  const deleteCategory = useDeleteCategory()
+  const deleteSpot = useDeleteSpot(id ?? '')
 
   useEffect(() => {
     if (catError) navigate('/', { replace: true })
@@ -69,6 +74,7 @@ export function CategoryDetailPage() {
               isActive={cat.id === id}
               onClick={() => navigate(`/categories/${cat.id}`)}
               onEdit={() => setEditingCategory(cat)}
+              onDelete={() => setDeletingCategory(cat)}
             />
           ))}
           <div className="mt-2 px-3">
@@ -119,7 +125,7 @@ export function CategoryDetailPage() {
               <div className="hidden gap-3 md:grid md:grid-cols-2 lg:grid-cols-3">
                 {spots.map((spot, i) => (
                   <div key={spot.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
-                    <SpotCard spot={spot} index={i} onClick={() => setSelectedSpot(spot)} />
+                    <SpotCard spot={spot} index={i} onClick={() => setSelectedSpot(spot)} onDelete={() => setDeletingSpot(spot)} />
                   </div>
                 ))}
               </div>
@@ -127,7 +133,7 @@ export function CategoryDetailPage() {
               <div className="md:hidden -mx-4 border-t border-border">
                 {spots.map((spot, i) => (
                   <div key={spot.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
-                    <SpotListItem spot={spot} index={i} onClick={() => setSelectedSpot(spot)} />
+                    <SpotListItem spot={spot} index={i} onClick={() => setSelectedSpot(spot)} onDelete={() => setDeletingSpot(spot)} />
                   </div>
                 ))}
               </div>
@@ -141,6 +147,33 @@ export function CategoryDetailPage() {
       )}
       <SpotDetailModal spot={selectedSpot} onClose={() => setSelectedSpot(null)} />
       <EditCategoryModal category={editingCategory} onClose={() => setEditingCategory(null)} />
+      <ConfirmDialog
+        open={deletingCategory !== null}
+        title="刪除分類"
+        description={`確定要刪除「${deletingCategory?.name}」嗎？底下的地點也會一起刪除。`}
+        onConfirm={async () => {
+          if (deletingCategory) {
+            await deleteCategory.mutateAsync(deletingCategory.id)
+            setDeletingCategory(null)
+            navigate('/')
+          }
+        }}
+        onClose={() => setDeletingCategory(null)}
+        isLoading={deleteCategory.isPending}
+      />
+      <ConfirmDialog
+        open={deletingSpot !== null}
+        title="刪除地點"
+        description={`確定要刪除「${deletingSpot?.name}」嗎？`}
+        onConfirm={async () => {
+          if (deletingSpot) {
+            await deleteSpot.mutateAsync(deletingSpot.id)
+            setDeletingSpot(null)
+          }
+        }}
+        onClose={() => setDeletingSpot(null)}
+        isLoading={deleteSpot.isPending}
+      />
     </div>
   )
 }

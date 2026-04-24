@@ -1,4 +1,5 @@
 // frontend/src/components/SpotCard.tsx
+import { Trash2 } from 'lucide-react'
 import type { Spot } from '@/types'
 import { getSpotGradient } from '@/lib/emoji'
 
@@ -6,9 +7,10 @@ interface Props {
   spot: Spot
   index: number
   onClick: () => void
+  onDelete?: () => void
 }
 
-export function SpotCard({ spot, index, onClick }: Props) {
+export function SpotCard({ spot, index, onClick, onDelete }: Props) {
   const gradient = getSpotGradient(index)
 
   return (
@@ -31,6 +33,16 @@ export function SpotCard({ spot, index, onClick }: Props) {
           >
             地圖 ↗
           </a>
+        )}
+        {onDelete && (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onDelete() }}
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="刪除地點"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
         )}
       </div>
       <p className="font-semibold text-sm text-foreground leading-snug group-hover:text-primary transition-colors duration-200">

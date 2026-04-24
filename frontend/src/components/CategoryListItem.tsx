@@ -1,5 +1,5 @@
 // frontend/src/components/CategoryListItem.tsx
-import { Pencil } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import type { Category } from '@/types'
 import { getAutoEmoji, getCategoryColor } from '@/lib/emoji'
 
@@ -9,9 +9,10 @@ interface Props {
   isActive: boolean
   onClick: () => void
   onEdit?: () => void
+  onDelete?: () => void
 }
 
-export function CategoryListItem({ category, index, isActive, onClick, onEdit }: Props) {
+export function CategoryListItem({ category, index, isActive, onClick, onEdit, onDelete }: Props) {
   const color = getCategoryColor(index)
   const emoji = category.emoji ?? getAutoEmoji(index)
 
@@ -49,6 +50,16 @@ export function CategoryListItem({ category, index, isActive, onClick, onEdit }:
           aria-label="編輯分類"
         >
           <Pencil className="h-3 w-3" />
+        </button>
+      )}
+      {onDelete && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onDelete() }}
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="刪除分類"
+        >
+          <Trash2 className="h-3 w-3" />
         </button>
       )}
     </button>
