@@ -29,14 +29,15 @@
 ## Implementation plan: docs/superpowers/plans/2026-04-23-ui-redesign.md
 
 - [x] Task 1: Design tokens + fonts (index.css + tailwind.config.ts) ← DONE, committed 5f882f5
-- [ ] **NEXT: Task 2** — Create `frontend/src/lib/emoji.ts` + `emoji.test.ts` (getAutoEmoji, getCategoryColor, getSpotGradient)
-- [ ] Task 3: CategoryCard rewrite
-- [ ] Task 4: CategoryListItem rewrite (sidebar item)
-- [ ] Task 5: SpotCard rewrite
-- [ ] Task 6: SpotListItem rewrite
-- [ ] Task 7: HomePage rewrite
-- [ ] Task 8: CategoryDetailPage rewrite
-- [ ] Task 9: Modal cleanup (AddCategoryModal, AddSpotModal, SpotDetailModal)
+- [x] Task 2: Create `frontend/src/lib/emoji.ts` + `emoji.test.ts` (getAutoEmoji, getCategoryColor, getSpotGradient)
+- [x] Task 3: CategoryCard rewrite
+- [x] Task 4: CategoryListItem rewrite (sidebar item)
+- [x] Task 5: SpotCard rewrite
+- [x] Task 6: SpotListItem rewrite
+- [x] Task 7: HomePage rewrite
+- [x] Task 8: CategoryDetailPage rewrite
+- [x] Task 9: Modal cleanup (AddCategoryModal, AddSpotModal, SpotDetailModal)
+- **UI Redesign Phase 2.1 COMPLETE**
 - Full redesign: light/bright Instagram-inspired. App renamed to **地點找找看**
 - Font: Plus Jakarta Sans + Noto Sans TC. Accent: #ff6b35 orange
 - Desktop: sticky header + sidebar (categories) + 3-col spot grid
