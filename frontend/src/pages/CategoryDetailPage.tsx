@@ -32,7 +32,7 @@ export function CategoryDetailPage() {
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
           >
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">地點找找看</span>
@@ -46,7 +46,7 @@ export function CategoryDetailPage() {
           )}
           <button
             onClick={() => setAddOpen(true)}
-            className="rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             ＋ 新增地點
           </button>
@@ -55,7 +55,7 @@ export function CategoryDetailPage() {
 
       <div className="flex min-h-[calc(100vh-56px)]">
         {/* Desktop sidebar */}
-        <aside className="hidden md:flex w-56 shrink-0 flex-col border-r border-border py-4">
+        <aside className="hidden md:flex w-[220px] shrink-0 flex-col border-r border-border py-4">
           <p className="mb-2 px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             分類
           </p>
@@ -71,7 +71,7 @@ export function CategoryDetailPage() {
           <div className="mt-2 px-3">
             <button
               onClick={() => navigate('/')}
-              className="w-full rounded-xl border border-dashed border-border py-2 text-xs text-muted-foreground hover:bg-muted transition-colors"
+              className="w-full rounded-xl border border-dashed border-border py-2 text-xs text-muted-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               管理分類
             </button>

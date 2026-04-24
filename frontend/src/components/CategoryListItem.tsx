@@ -16,6 +16,7 @@ export function CategoryListItem({ category, index, isActive, onClick }: Props) 
   return (
     <button
       onClick={onClick}
+      aria-current={isActive ? 'page' : undefined}
       className={[
         'group relative flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         isActive ? 'bg-accent' : 'hover:bg-muted',
