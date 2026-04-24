@@ -5,6 +5,7 @@ export const categories = pgTable('categories', {
   name: text('name').notNull(),
   emoji: text('emoji'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  deletedAt: timestamp('deleted_at'),
 });
 
 export const spots = pgTable('spots', {
@@ -17,4 +18,5 @@ export const spots = pgTable('spots', {
   mapsUrl: text('maps_url'),
   notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  deletedAt: timestamp('deleted_at'),
 });

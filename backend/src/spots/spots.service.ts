@@ -4,7 +4,7 @@ import {
   Inject,
   NotFoundException,
 } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { DATABASE } from '../db/db.module';
 import type { DrizzleDB } from '../db/db.module';
 import { spots } from '../db/schema';
@@ -24,7 +24,7 @@ export class SpotsService {
     return this.db
       .select()
       .from(spots)
-      .where(eq(spots.categoryId, categoryId))
+      .where(and(eq(spots.categoryId, categoryId), isNull(spots.deletedAt)))
       .orderBy(spots.createdAt);
   }
 
@@ -45,7 +45,7 @@ export class SpotsService {
     const [spot] = await this.db
       .update(spots)
       .set(dto)
-      .where(and(eq(spots.id, id), eq(spots.categoryId, categoryId)))
+      .where(and(eq(spots.id, id), eq(spots.categoryId, categoryId), isNull(spots.deletedAt)))
       .returning();
     if (!spot) throw new NotFoundException(`Spot ${id} not found`);
     return spot;
@@ -54,8 +54,9 @@ export class SpotsService {
   async remove(categoryId: string, id: string) {
     await this.categoriesService.findOne(categoryId);
     const [spot] = await this.db
-      .delete(spots)
-      .where(and(eq(spots.id, id), eq(spots.categoryId, categoryId)))
+      .update(spots)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(spots.id, id), eq(spots.categoryId, categoryId), isNull(spots.deletedAt)))
       .returning();
     if (!spot) throw new NotFoundException(`Spot ${id} not found`);
     return spot;

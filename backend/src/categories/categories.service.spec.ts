@@ -47,7 +47,7 @@ describe('CategoriesService', () => {
     it('calls where with ilike when query is provided', async () => {
       // findAll(q) chain: .select().from().where().orderBy() — terminal is whereChain.orderBy
       whereChain.orderBy.mockResolvedValue([
-        { id: 'uuid-1', name: 'cry place', emoji: null, createdAt: new Date() },
+        { id: 'uuid-1', name: 'cry place', emoji: null, deletedAt: null, createdAt: new Date() },
       ]);
       const result = await service.findAll('cry');
       expect(mockDb.where).toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe('CategoriesService', () => {
     });
 
     it('returns category when found', async () => {
-      const category = { id: 'uuid-1', name: 'Test', emoji: null, createdAt: new Date() };
+      const category = { id: 'uuid-1', name: 'Test', emoji: null, deletedAt: null, createdAt: new Date() };
       whereChain.then.mockImplementation((resolve: any, _reject: any) =>
         resolve([category]),
       );
@@ -89,6 +89,7 @@ describe('CategoriesService', () => {
         id: 'uuid-1',
         name: 'New Category',
         emoji: null,
+        deletedAt: null,
         createdAt: new Date(),
       };
       mockDb.returning.mockResolvedValue([category]);
@@ -98,7 +99,7 @@ describe('CategoriesService', () => {
 
     it('does not enforce max-length on name (DTO gap — backend accepts oversized input)', async () => {
       const longName = 'a'.repeat(200);
-      const category = { id: 'uuid-1', name: longName, emoji: null, createdAt: new Date() };
+      const category = { id: 'uuid-1', name: longName, emoji: null, deletedAt: null, createdAt: new Date() };
       mockDb.returning.mockResolvedValue([category]);
       const result = await service.create({ name: longName });
       // If @MaxLength were enforced at service level this would throw; currently it returns.
@@ -106,14 +107,14 @@ describe('CategoriesService', () => {
     });
 
     it('passes emoji when provided', async () => {
-      const category = { id: 'uuid-1', name: 'New', emoji: '🏖️', createdAt: new Date() };
+      const category = { id: 'uuid-1', name: 'New', emoji: '🏖️', deletedAt: null, createdAt: new Date() };
       mockDb.returning.mockResolvedValue([category]);
       const result = await service.create({ name: 'New', emoji: '🏖️' });
       expect(result.emoji).toBe('🏖️');
     });
 
     it('accepts undefined emoji (no emoji case)', async () => {
-      const category = { id: 'uuid-1', name: 'New', emoji: null, createdAt: new Date() };
+      const category = { id: 'uuid-1', name: 'New', emoji: null, deletedAt: null, createdAt: new Date() };
       mockDb.returning.mockResolvedValue([category]);
       const result = await service.create({ name: 'New' });
       expect(result.emoji).toBeNull();
@@ -129,7 +130,7 @@ describe('CategoriesService', () => {
 
     it('returns updated category', async () => {
       // update chain: .update().set().where().returning() — terminal is whereChain.returning
-      const category = { id: 'uuid-1', name: 'Updated', emoji: null, createdAt: new Date() };
+      const category = { id: 'uuid-1', name: 'Updated', emoji: null, deletedAt: null, createdAt: new Date() };
       whereChain.returning.mockResolvedValue([category]);
       const result = await service.update('uuid-1', { name: 'Updated' });
       expect(result).toEqual(category);
@@ -145,8 +146,8 @@ describe('CategoriesService', () => {
 
   describe('remove', () => {
     it('returns deleted category', async () => {
-      // remove chain: .delete().where().returning() — terminal is whereChain.returning
-      const category = { id: 'uuid-1', name: 'Deleted', emoji: null, createdAt: new Date() };
+      // remove now uses update (soft delete): .update().set().where().returning()
+      const category = { id: 'uuid-1', name: 'Deleted', emoji: null, deletedAt: new Date(), createdAt: new Date() };
       whereChain.returning.mockResolvedValue([category]);
       const result = await service.remove('uuid-1');
       expect(result).toEqual(category);
@@ -157,6 +158,14 @@ describe('CategoriesService', () => {
       await expect(service.remove('non-existent')).rejects.toThrow(
         NotFoundException,
       );
+    });
+
+    it('calls update (not delete) for soft delete', async () => {
+      const category = { id: 'uuid-1', name: 'Deleted', emoji: null, deletedAt: new Date(), createdAt: new Date() };
+      whereChain.returning.mockResolvedValue([category]);
+      await service.remove('uuid-1');
+      expect(mockDb.update).toHaveBeenCalled();
+      expect(mockDb.delete).not.toHaveBeenCalled();
     });
   });
 });

@@ -34,6 +34,7 @@ describe('SpotsService', () => {
       findOne: jest.fn().mockResolvedValue({
         id: 'cat-1',
         name: 'Test Category',
+        deletedAt: null,
         createdAt: new Date(),
       }),
     };
@@ -61,6 +62,7 @@ describe('SpotsService', () => {
         id: 'spot-1',
         name: 'Test Spot',
         categoryId: 'cat-1',
+        deletedAt: null,
         createdAt: new Date(),
       };
       whereChain.orderBy.mockResolvedValue([spot]);
@@ -84,6 +86,7 @@ describe('SpotsService', () => {
         id: 'spot-1',
         name: 'New Spot',
         categoryId: 'cat-1',
+        deletedAt: null,
         createdAt: new Date(),
       };
       mockDb.returning.mockResolvedValue([spot]);
@@ -113,6 +116,7 @@ describe('SpotsService', () => {
         id: 'spot-1',
         name: 'Updated',
         categoryId: 'cat-1',
+        deletedAt: null,
         createdAt: new Date(),
       };
       whereChain.returning.mockResolvedValue([spot]);
@@ -136,6 +140,7 @@ describe('SpotsService', () => {
         id: 'spot-1',
         name: 'Spot',
         categoryId: 'cat-1',
+        deletedAt: new Date(),
         createdAt: new Date(),
       };
       whereChain.returning.mockResolvedValue([spot]);
@@ -159,6 +164,14 @@ describe('SpotsService', () => {
         NotFoundException,
       );
     });
+
+    it('calls update (not delete) for soft delete', async () => {
+      const spot = { id: 'spot-1', name: 'Spot', categoryId: 'cat-1', deletedAt: new Date(), createdAt: new Date() };
+      whereChain.returning.mockResolvedValue([spot]);
+      await service.remove('cat-1', 'spot-1');
+      expect(mockDb.update).toHaveBeenCalled();
+      expect(mockDb.delete).not.toHaveBeenCalled();
+    });
   });
 
   // NOTE: update() and remove() filter spots only by spot id, NOT by (categoryId, id).
@@ -171,6 +184,7 @@ describe('SpotsService', () => {
         id: 'spot-99',
         name: 'Updated',
         categoryId: 'cat-99',
+        deletedAt: null,
         createdAt: new Date(),
       };
       whereChain.returning.mockResolvedValue([spotFromAnotherCategory]);
@@ -184,6 +198,7 @@ describe('SpotsService', () => {
         id: 'spot-99',
         name: 'Spot',
         categoryId: 'cat-99',
+        deletedAt: new Date(),
         createdAt: new Date(),
       };
       whereChain.returning.mockResolvedValue([spotFromAnotherCategory]);

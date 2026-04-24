@@ -4,10 +4,10 @@ import {
   Inject,
   NotFoundException,
 } from '@nestjs/common';
-import { eq, ilike } from 'drizzle-orm';
+import { and, eq, ilike, isNull } from 'drizzle-orm';
 import { DATABASE } from '../db/db.module';
 import type { DrizzleDB } from '../db/db.module';
-import { categories } from '../db/schema';
+import { categories, spots } from '../db/schema';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
@@ -21,17 +21,21 @@ export class CategoriesService {
       return this.db
         .select()
         .from(categories)
-        .where(ilike(categories.name, `%${escaped}%`))
+        .where(and(ilike(categories.name, `%${escaped}%`), isNull(categories.deletedAt)))
         .orderBy(categories.createdAt);
     }
-    return this.db.select().from(categories).orderBy(categories.createdAt);
+    return this.db
+      .select()
+      .from(categories)
+      .where(isNull(categories.deletedAt))
+      .orderBy(categories.createdAt);
   }
 
   async findOne(id: string) {
     const [category] = await this.db
       .select()
       .from(categories)
-      .where(eq(categories.id, id));
+      .where(and(eq(categories.id, id), isNull(categories.deletedAt)));
     if (!category) throw new NotFoundException(`Category ${id} not found`);
     return category;
   }
@@ -48,16 +52,24 @@ export class CategoriesService {
     const [category] = await this.db
       .update(categories)
       .set(dto)
-      .where(eq(categories.id, id))
+      .where(and(eq(categories.id, id), isNull(categories.deletedAt)))
       .returning();
     if (!category) throw new NotFoundException(`Category ${id} not found`);
     return category;
   }
 
   async remove(id: string) {
+    const now = new Date();
+    // Soft-delete all spots in this category first
+    await this.db
+      .update(spots)
+      .set({ deletedAt: now })
+      .where(and(eq(spots.categoryId, id), isNull(spots.deletedAt)));
+    // Soft-delete the category
     const [category] = await this.db
-      .delete(categories)
-      .where(eq(categories.id, id))
+      .update(categories)
+      .set({ deletedAt: now })
+      .where(and(eq(categories.id, id), isNull(categories.deletedAt)))
       .returning();
     if (!category) throw new NotFoundException(`Category ${id} not found`);
     return category;
