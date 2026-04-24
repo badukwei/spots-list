@@ -26,29 +26,40 @@ describe('Rate limiting (e2e)', () => {
 
   describe('burst rule (short: TTL 3s, limit 1)', () => {
     it('first request succeeds, second immediate request gets 429', async () => {
-      // First request: should pass (may get 404 for unknown route, but NOT 429)
       const first = await request(app.getHttpServer()).get('/categories');
+      console.log('[1st] status:', first.status, '| body:', first.body, '| headers:', {
+        'x-ratelimit-limit-short': first.headers['x-ratelimit-limit-short'],
+        'x-ratelimit-remaining-short': first.headers['x-ratelimit-remaining-short'],
+        'retry-after': first.headers['retry-after'],
+      });
       expect(first.status).not.toBe(429);
 
-      // Second request immediately: blocked by burst rule
       const second = await request(app.getHttpServer()).get('/categories');
+      console.log('[2nd] status:', second.status, '| body:', second.body, '| headers:', {
+        'x-ratelimit-limit-short': second.headers['x-ratelimit-limit-short'],
+        'x-ratelimit-remaining-short': second.headers['x-ratelimit-remaining-short'],
+        'retry-after': second.headers['retry-after'],
+      });
       expect(second.status).toBe(429);
     });
 
     it('returns 429 with correct error structure', async () => {
       await request(app.getHttpServer()).get('/categories');
       const res = await request(app.getHttpServer()).get('/categories');
+      console.log('[429 body]', res.body);
       expect(res.status).toBe(429);
       expect(res.body).toHaveProperty('message');
     });
 
     it('applies to POST endpoints too', async () => {
-      await request(app.getHttpServer())
+      const first = await request(app.getHttpServer())
         .post('/categories')
         .send({ name: 'Test' });
+      console.log('[POST 1st] status:', first.status, '| body:', first.body);
       const second = await request(app.getHttpServer())
         .post('/categories')
         .send({ name: 'Test2' });
+      console.log('[POST 2nd] status:', second.status, '| body:', second.body);
       expect(second.status).toBe(429);
     });
   });
