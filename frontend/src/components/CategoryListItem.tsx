@@ -1,4 +1,5 @@
 // frontend/src/components/CategoryListItem.tsx
+import { Pencil } from 'lucide-react'
 import type { Category } from '@/types'
 import { getAutoEmoji, getCategoryColor } from '@/lib/emoji'
 
@@ -7,9 +8,10 @@ interface Props {
   index: number
   isActive: boolean
   onClick: () => void
+  onEdit?: () => void
 }
 
-export function CategoryListItem({ category, index, isActive, onClick }: Props) {
+export function CategoryListItem({ category, index, isActive, onClick, onEdit }: Props) {
   const color = getCategoryColor(index)
   const emoji = category.emoji ?? getAutoEmoji(index)
 
@@ -33,12 +35,22 @@ export function CategoryListItem({ category, index, isActive, onClick }: Props) 
       </div>
       <span
         className={[
-          'truncate text-sm font-medium',
+          'flex-1 truncate text-sm font-medium',
           isActive ? 'text-primary' : 'text-foreground group-hover:text-foreground',
         ].join(' ')}
       >
         {category.name}
       </span>
+      {onEdit && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onEdit() }}
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-foreground transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="編輯分類"
+        >
+          <Pencil className="h-3 w-3" />
+        </button>
+      )}
     </button>
   )
 }

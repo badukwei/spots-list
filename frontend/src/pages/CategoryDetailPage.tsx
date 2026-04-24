@@ -9,13 +9,15 @@ import { SpotCard } from '@/components/SpotCard'
 import { SpotListItem } from '@/components/SpotListItem'
 import { AddSpotModal } from '@/components/AddSpotModal'
 import { SpotDetailModal } from '@/components/SpotDetailModal'
-import type { Spot } from '@/types'
+import { EditCategoryModal } from '@/components/EditCategoryModal'
+import type { Spot, Category } from '@/types'
 
 export function CategoryDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [addOpen, setAddOpen] = useState(false)
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null)
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
 
   const { data: allCategories } = useCategories()
   const { data: category, isLoading: catLoading, error: catError } = useCategory(id)
@@ -66,6 +68,7 @@ export function CategoryDetailPage() {
               index={i}
               isActive={cat.id === id}
               onClick={() => navigate(`/categories/${cat.id}`)}
+              onEdit={() => setEditingCategory(cat)}
             />
           ))}
           <div className="mt-2 px-3">
@@ -137,6 +140,7 @@ export function CategoryDetailPage() {
         <AddSpotModal open={addOpen} onClose={() => setAddOpen(false)} categoryId={id} />
       )}
       <SpotDetailModal spot={selectedSpot} onClose={() => setSelectedSpot(null)} />
+      <EditCategoryModal category={editingCategory} onClose={() => setEditingCategory(null)} />
     </div>
   )
 }

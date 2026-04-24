@@ -4,13 +4,16 @@ import { useNavigate } from 'react-router-dom'
 import { useCategories } from '@/hooks/useCategories'
 import { CategoryCard } from '@/components/CategoryCard'
 import { AddCategoryModal } from '@/components/AddCategoryModal'
+import { EditCategoryModal } from '@/components/EditCategoryModal'
 import { useDebounce } from '@/hooks/useDebounce'
 import { getAutoEmoji, getCategoryColor } from '@/lib/emoji'
+import type { Category } from '@/types'
 
 export function HomePage() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [addOpen, setAddOpen] = useState(false)
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const debouncedSearch = useDebounce(search, 300)
   const { data: categories, isLoading, error } = useCategories(debouncedSearch || undefined)
 
@@ -61,7 +64,7 @@ export function HomePage() {
               </button>
               {categories.map((cat, i) => {
                 const color = getCategoryColor(i)
-                const emoji = getAutoEmoji(i)
+                const emoji = cat.emoji ?? getAutoEmoji(i)
                 return (
                   <button
                     key={cat.id}
@@ -116,6 +119,7 @@ export function HomePage() {
                   category={cat}
                   index={i}
                   onClick={() => handleCategoryClick(cat.id)}
+                  onEdit={() => setEditingCategory(cat)}
                 />
               </div>
             ))}
@@ -124,6 +128,7 @@ export function HomePage() {
       </main>
 
       <AddCategoryModal open={addOpen} onClose={() => setAddOpen(false)} />
+      <EditCategoryModal category={editingCategory} onClose={() => setEditingCategory(null)} />
     </div>
   )
 }
