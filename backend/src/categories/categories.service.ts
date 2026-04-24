@@ -4,7 +4,7 @@ import {
   Inject,
   NotFoundException,
 } from '@nestjs/common';
-import { and, eq, ilike, isNull } from 'drizzle-orm';
+import { and, eq, ilike, isNull, sql } from 'drizzle-orm';
 import { DATABASE } from '../db/db.module';
 import type { DrizzleDB } from '../db/db.module';
 import { categories, spots } from '../db/schema';
@@ -15,20 +15,32 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoriesService {
   constructor(@Inject(DATABASE) private db: DrizzleDB) {}
 
-  async findAll(q?: string) {
-    if (q) {
-      const escaped = q.replace(/[%_\\]/g, '\\$&');
-      return this.db
-        .select()
-        .from(categories)
-        .where(and(ilike(categories.name, `%${escaped}%`), isNull(categories.deletedAt)))
-        .orderBy(categories.createdAt);
-    }
-    return this.db
+  async findAll(q?: string, page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    const baseWhere = q
+      ? and(ilike(categories.name, `%${q.replace(/[%_\\]/g, '\\$&')}%`), isNull(categories.deletedAt))
+      : isNull(categories.deletedAt);
+
+    const [{ total }] = await this.db
+      .select({ total: sql<number>`cast(count(*) as int)` })
+      .from(categories)
+      .where(baseWhere);
+
+    const data = await this.db
       .select()
       .from(categories)
-      .where(isNull(categories.deletedAt))
-      .orderBy(categories.createdAt);
+      .where(baseWhere)
+      .orderBy(categories.createdAt)
+      .limit(limit)
+      .offset(offset);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string) {

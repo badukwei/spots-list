@@ -12,7 +12,9 @@ describe('CategoriesService', () => {
   beforeEach(async () => {
     // whereChain supports both: await db...where() and db...where().orderBy()/.returning()
     whereChain = {
-      orderBy: jest.fn().mockResolvedValue([]),
+      orderBy: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      offset: jest.fn().mockResolvedValue([]),
       returning: jest.fn().mockResolvedValue([]),
       then: jest.fn((resolve, _reject) => resolve([])),
     };
@@ -22,6 +24,8 @@ describe('CategoriesService', () => {
       from: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockResolvedValue([]),
       where: jest.fn().mockReturnValue(whereChain),
+      limit: jest.fn().mockReturnThis(),
+      offset: jest.fn().mockResolvedValue([]),
       insert: jest.fn().mockReturnThis(),
       values: jest.fn().mockReturnThis(),
       returning: jest.fn().mockResolvedValue([]),
@@ -38,26 +42,31 @@ describe('CategoriesService', () => {
   });
 
   describe('findAll', () => {
-    it('returns empty array when no categories', async () => {
-      mockDb.orderBy.mockResolvedValue([]);
+    it('returns paginated response with empty data', async () => {
+      whereChain.then.mockImplementation((resolve: any) => resolve([{ total: 0 }]));
+      whereChain.offset.mockResolvedValue([]);
       const result = await service.findAll();
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
+      expect(result.total).toBe(0);
+      expect(result.page).toBe(1);
+      expect(result.limit).toBe(20);
+      expect(result.totalPages).toBe(0);
     });
 
-    it('calls where with ilike when query is provided', async () => {
-      // findAll(q) chain: .select().from().where().orderBy() — terminal is whereChain.orderBy
-      whereChain.orderBy.mockResolvedValue([
-        { id: 'uuid-1', name: 'cry place', emoji: null, deletedAt: null, createdAt: new Date() },
-      ]);
+    it('returns paginated response with data', async () => {
+      const category = { id: 'uuid-1', name: 'cry place', emoji: null, deletedAt: null, createdAt: new Date() };
+      whereChain.then.mockImplementation((resolve: any) => resolve([{ total: 1 }]));
+      whereChain.offset.mockResolvedValue([category]);
       const result = await service.findAll('cry');
-      expect(mockDb.where).toHaveBeenCalled();
-      expect(result).toHaveLength(1);
+      expect(result.data).toHaveLength(1);
+      expect(result.total).toBe(1);
+      expect(result.totalPages).toBe(1);
     });
 
     it('does not throw when query contains LIKE special characters', async () => {
-      whereChain.orderBy.mockResolvedValue([]);
+      whereChain.then.mockImplementation((resolve: any) => resolve([{ total: 0 }]));
+      whereChain.offset.mockResolvedValue([]);
       await expect(service.findAll('50%_off\\deal')).resolves.not.toThrow();
-      expect(mockDb.where).toHaveBeenCalled();
     });
   });
 

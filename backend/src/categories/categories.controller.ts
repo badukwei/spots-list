@@ -20,7 +20,7 @@ export class CategoriesController {
 
   @Get()
   findAll(@Query() query: SearchCategoryDto) {
-    return this.categoriesService.findAll(query.q);
+    return this.categoriesService.findAll(query.q, query.page, query.limit);
   }
 
   @Get(':id')
