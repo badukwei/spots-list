@@ -28,7 +28,7 @@ export function AddCategoryModal({ open, onClose }: Props) {
   })
 
   const onSubmit = async (values: CategoryFormValues) => {
-    await addCategory.mutateAsync(values.name)
+    await addCategory.mutateAsync({ name: values.name, emoji: values.emoji })
     reset()
     onClose()
   }
@@ -50,6 +50,17 @@ export function AddCategoryModal({ open, onClose }: Props) {
           <DialogTitle className="text-base font-bold">新增分類</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <Input
+              placeholder="輸入 emoji（例如：☕）"
+              {...register('emoji')}
+              disabled={isSubmitting}
+              className="w-20 text-center text-xl"
+            />
+            {errors.emoji && (
+              <p className="mt-1 text-xs text-destructive">{errors.emoji.message}</p>
+            )}
+          </div>
           <div>
             <Input
               placeholder="例如：適合一個人哭的地方"

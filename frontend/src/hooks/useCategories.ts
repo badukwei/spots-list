@@ -27,8 +27,8 @@ export function useCategory(id: string | undefined) {
 export function useAddCategory() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (name: string) => {
-      const { data } = await api.post<Category>('/categories', { name })
+    mutationFn: async ({ name, emoji }: { name: string; emoji?: string }) => {
+      const { data } = await api.post<Category>('/categories', { name, emoji })
       return data
     },
     onSuccess: () => {
