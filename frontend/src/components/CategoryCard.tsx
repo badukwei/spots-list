@@ -1,4 +1,6 @@
+// frontend/src/components/CategoryCard.tsx
 import type { Category } from '@/types'
+import { getAutoEmoji, getCategoryColor } from '@/lib/emoji'
 
 interface Props {
   category: Category
@@ -7,15 +9,21 @@ interface Props {
 }
 
 export function CategoryCard({ category, index, onClick }: Props) {
+  const color = getCategoryColor(index)
+  const emoji = getAutoEmoji(index)
+
   return (
     <button
       onClick={onClick}
-      className="group w-full text-left rounded-lg border border-border bg-card p-5 hover:border-primary/40 hover:shadow-[0_4px_24px_rgba(212,240,74,0.06)] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group w-full text-left rounded-xl border border-border bg-card p-4 hover:border-gray-200 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
-      <span className="text-[10px] font-medium tracking-widest text-muted-foreground mb-3 block uppercase">
-        {String(index).padStart(2, '0')}
-      </span>
-      <p className="font-display italic text-lg leading-snug text-foreground group-hover:text-primary transition-colors duration-300">
+      <div
+        className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl text-xl"
+        style={{ background: color.bg }}
+      >
+        {emoji}
+      </div>
+      <p className="font-semibold text-sm text-foreground leading-snug group-hover:text-primary transition-colors duration-200">
         {category.name}
       </p>
     </button>
