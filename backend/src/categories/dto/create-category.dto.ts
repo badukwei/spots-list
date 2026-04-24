@@ -8,6 +8,7 @@ export class CreateCategoryDto {
 
   @IsOptional()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(10)
   emoji?: string;
 }
