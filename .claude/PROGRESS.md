@@ -45,24 +45,34 @@
 - Spot thumbnails: color gradient mock (no real image)
 - Emoji: auto-assign by index (mock) until Phase 2.2 schema migration lands
 
-## Emoji Schema Migration (Phase 2.2)
+## Emoji Schema Migration (Phase 2.2) — COMPLETE
 
-- [ ] Backend: add `emoji` nullable text field to `categories` Drizzle schema
-- [ ] Backend: update `CreateCategoryDto` + `UpdateCategoryDto` to accept optional `emoji`
-- [ ] Backend: `drizzle-kit push` to Supabase
-- [ ] Backend: update unit tests
-- [ ] Frontend: wire up real `emoji` field (replace auto-assign mock)
+- [x] Backend: add `emoji` nullable text field to `categories` Drizzle schema
+- [x] Backend: update `CreateCategoryDto` + `UpdateCategoryDto` to accept optional `emoji`
+- [x] Backend: `drizzle-kit push` to Supabase
+- [x] Backend: update unit tests
+- [x] Frontend: wire up real `emoji` field (replace auto-assign mock with `category.emoji ?? getAutoEmoji(index)`)
+- [x] Frontend: EditCategoryModal — emoji picker (63 emoji) + name input, calls PATCH /categories/:id
+- [x] Frontend: edit button (pencil, hover) on CategoryCard + CategoryListItem
+- [x] Frontend: HomePage + CategoryDetailPage wired to EditCategoryModal
 
 ## Integration Testing Plan (Phase 2.3)
 
 - [ ] Not started — local frontend + backend testing together
 
-## Soft Delete Plan (Phase 2.4)
+## Soft Delete + Duplicate Detection (Phase 2.4) — COMPLETE
 
-- [ ] Not started
-- Backend: add `deletedAt` timestamp to `categories` + `spots` schema; filter out in all queries; migration via `drizzle-kit push`
-- Frontend: delete UI for categories + spots (trigger soft delete, not hard delete)
-- Tests: unit tests for filtered queries + delete endpoints
+- [x] Backend: add `deletedAt` to categories + spots schema
+- [x] Backend: all queries filter `isNull(deletedAt)`; remove() soft-deletes (no hard delete)
+- [x] Backend: category remove also soft-deletes all spots in category
+- [x] Backend: unit tests updated (soft-delete assertions)
+- [x] Backend: `drizzle-kit push` to Supabase — **TODO: user must run**
+- [x] Frontend: `useDeleteCategory` + `useDeleteSpot` hooks
+- [x] Frontend: `ConfirmDialog` component
+- [x] Frontend: trash button (hover) on CategoryCard, CategoryListItem, SpotCard, SpotListItem
+- [x] Frontend: ConfirmDialog wired in HomePage + CategoryDetailPage
+- [x] Frontend: AddCategoryModal — emoji picker (replaces text input) + fuzzy duplicate name warning (fuse.js)
+- [x] Frontend: AddSpotModal — fuzzy duplicate name + exact mapsUrl duplicate warning
 
 ## Backend Security Plan (Phase 3)
 
