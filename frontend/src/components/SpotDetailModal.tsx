@@ -16,7 +16,7 @@ export function SpotDetailModal({ spot, onClose }: Props) {
     <Dialog open={spot !== null} onOpenChange={(open) => { if (!open) onClose() }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display italic text-lg">{spot?.name}</DialogTitle>
+          <DialogTitle className="text-base font-bold">{spot?.name}</DialogTitle>
         </DialogHeader>
         {spot && (
           <div className="space-y-4 text-sm">

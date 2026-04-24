@@ -48,7 +48,7 @@ export function AddSpotModal({ open, onClose, categoryId }: Props) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display italic text-lg">新增景點</DialogTitle>
+          <DialogTitle className="text-base font-bold">新增地點</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
           <div>

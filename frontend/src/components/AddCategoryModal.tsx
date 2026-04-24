@@ -47,7 +47,7 @@ export function AddCategoryModal({ open, onClose }: Props) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display italic text-lg">新增分類</DialogTitle>
+          <DialogTitle className="text-base font-bold">新增分類</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
