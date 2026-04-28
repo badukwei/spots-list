@@ -1,5 +1,5 @@
 // frontend/src/components/SpotListItem.tsx
-import { ChevronRight, Trash2 } from 'lucide-react'
+import { ChevronRight, Pencil, Trash2 } from 'lucide-react'
 import type { Spot } from '@/types'
 import { getSpotGradient } from '@/lib/emoji'
 
@@ -7,10 +7,11 @@ interface Props {
   spot: Spot
   index: number
   onClick: () => void
+  onEdit?: () => void
   onDelete?: () => void
 }
 
-export function SpotListItem({ spot, index, onClick, onDelete }: Props) {
+export function SpotListItem({ spot, index, onClick, onEdit, onDelete }: Props) {
   const gradient = getSpotGradient(index)
 
   return (
@@ -33,16 +34,28 @@ export function SpotListItem({ spot, index, onClick, onDelete }: Props) {
           {spot.address ? `📍 ${spot.address}` : '未提供地址'}
         </p>
       </div>
-      {onDelete && (
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); onDelete() }}
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label="刪除地點"
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
-      )}
+      <div className="flex items-center gap-1">
+        {onEdit && (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onEdit() }}
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="編輯地點"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
+        )}
+        {onDelete && (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onDelete() }}
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="刪除地點"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
       <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors duration-150" />
     </div>
   )

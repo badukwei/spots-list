@@ -38,6 +38,19 @@ export function useAddSpot(categoryId: string) {
   })
 }
 
+export function useUpdateSpot(categoryId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, ...values }: { id: string } & Partial<SpotFormValues>) => {
+      const { data } = await api.patch<Spot>(`/categories/${categoryId}/spots/${id}`, values)
+      return data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['spots', categoryId] })
+    },
+  })
+}
+
 export function useDeleteSpot(categoryId: string) {
   const queryClient = useQueryClient()
   return useMutation({

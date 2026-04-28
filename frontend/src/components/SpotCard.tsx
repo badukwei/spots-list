@@ -1,5 +1,5 @@
 // frontend/src/components/SpotCard.tsx
-import { Trash2 } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import type { Spot } from '@/types'
 import { getSpotGradient } from '@/lib/emoji'
 
@@ -7,10 +7,11 @@ interface Props {
   spot: Spot
   index: number
   onClick: () => void
+  onEdit?: () => void
   onDelete?: () => void
 }
 
-export function SpotCard({ spot, index, onClick, onDelete }: Props) {
+export function SpotCard({ spot, index, onClick, onEdit, onDelete }: Props) {
   const gradient = getSpotGradient(index)
 
   return (
@@ -26,16 +27,28 @@ export function SpotCard({ spot, index, onClick, onDelete }: Props) {
           className="h-10 w-10 shrink-0 rounded-xl"
           style={{ background: gradient }}
         />
-        {onDelete && (
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onDelete() }}
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="刪除地點"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
-        )}
+        <div className="flex items-center gap-1">
+          {onEdit && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onEdit() }}
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label="編輯地點"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onDelete() }}
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label="刪除地點"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       </div>
       <p className="font-semibold text-sm text-foreground leading-snug group-hover:text-primary transition-colors duration-200">
         {spot.name}

@@ -9,6 +9,7 @@ import { CategoryListItem } from '@/components/CategoryListItem'
 import { SpotCard } from '@/components/SpotCard'
 import { SpotListItem } from '@/components/SpotListItem'
 import { AddSpotModal } from '@/components/AddSpotModal'
+import { EditSpotModal } from '@/components/EditSpotModal'
 import { SpotDetailModal } from '@/components/SpotDetailModal'
 import { EditCategoryModal } from '@/components/EditCategoryModal'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
@@ -22,6 +23,7 @@ export function CategoryDetailPage() {
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
+  const [editingSpot, setEditingSpot] = useState<Spot | null>(null)
   const [deletingSpot, setDeletingSpot] = useState<Spot | null>(null)
   const [spotsPage, setSpotsPage] = useState(1)
   const [spotsSearch, setSpotsSearch] = useState('')
@@ -146,7 +148,7 @@ export function CategoryDetailPage() {
               <div className="hidden gap-3 md:grid md:grid-cols-2 lg:grid-cols-3">
                 {spots.data.map((spot, i) => (
                   <div key={spot.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
-                    <SpotCard spot={spot} index={i} onClick={() => setSelectedSpot(spot)} onDelete={() => setDeletingSpot(spot)} />
+                    <SpotCard spot={spot} index={i} onClick={() => setSelectedSpot(spot)} onEdit={() => setEditingSpot(spot)} onDelete={() => setDeletingSpot(spot)} />
                   </div>
                 ))}
               </div>
@@ -154,7 +156,7 @@ export function CategoryDetailPage() {
               <div className="md:hidden -mx-4 border-t border-border">
                 {spots.data.map((spot, i) => (
                   <div key={spot.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
-                    <SpotListItem spot={spot} index={i} onClick={() => setSelectedSpot(spot)} onDelete={() => setDeletingSpot(spot)} />
+                    <SpotListItem spot={spot} index={i} onClick={() => setSelectedSpot(spot)} onEdit={() => setEditingSpot(spot)} onDelete={() => setDeletingSpot(spot)} />
                   </div>
                 ))}
               </div>
@@ -172,6 +174,7 @@ export function CategoryDetailPage() {
         <AddSpotModal open={addOpen} onClose={() => setAddOpen(false)} categoryId={id} />
       )}
       <SpotDetailModal spot={selectedSpot} onClose={() => setSelectedSpot(null)} />
+      {id && <EditSpotModal spot={editingSpot} categoryId={id} onClose={() => setEditingSpot(null)} />}
       <EditCategoryModal category={editingCategory} onClose={() => setEditingCategory(null)} />
       <ConfirmDialog
         open={deletingCategory !== null}
