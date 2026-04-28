@@ -40,26 +40,26 @@ export function SpotCard({ spot, index, onClick, onDelete }: Props) {
       <p className="font-semibold text-sm text-foreground leading-snug group-hover:text-primary transition-colors duration-200">
         {spot.name}
       </p>
-      <p className="mt-1 text-xs text-muted-foreground truncate">
-        {spot.address ? `📍 ${spot.address}` : '未提供地址'}
-      </p>
-      {spot.notes && (
-        <p className="mt-2 line-clamp-2 text-xs text-muted-foreground border-t border-border pt-2 leading-relaxed">
-          {spot.notes}
+      <div className="mt-1 flex items-center justify-between gap-2">
+        <p className="min-w-0 truncate text-xs text-muted-foreground">
+          {spot.address ? `📍 ${spot.address}` : '未提供地址'}
         </p>
-      )}
-      {spot.mapsUrl && (
-        <div className="mt-2 flex justify-end">
+        {spot.mapsUrl && (
           <a
             href={spot.mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="text-xs font-medium text-primary hover:underline"
+            className="shrink-0 text-xs font-medium text-primary hover:underline"
           >
             地圖 ↗
           </a>
-        </div>
+        )}
+      </div>
+      {spot.notes && (
+        <p className="mt-2 line-clamp-2 text-xs text-muted-foreground border-t border-border pt-2 leading-relaxed">
+          {spot.notes}
+        </p>
       )}
     </div>
   )
