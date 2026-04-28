@@ -92,6 +92,12 @@
 - [x] Task 31: Frontend PaginatedResponse type + update useCategories/useSpots hooks
 - [x] Task 32: Frontend pagination UI (HomePage + CategoryDetailPage) — Pagination component + prev/next controls
 
+### Phase 3c: QA + Bug Fixes — COMPLETE
+
+- [x] `mapsUrl` required (removed @IsOptional from DTO + .optional() from Zod schema)
+- [x] `<button>` nested in `<button>` HTML error fixed (CategoryCard, CategoryListItem, SpotCard, SpotListItem → outer changed to `<div role="button">`)
+- [x] Double request bug: typing search on page 2 fired (newSearch, oldPage) + (newSearch, page=1) within ms, triggering short rate limit — fixed with `committedSearch` state batched atomically with `setPage(1)` in useEffect
+
 ## Deployment Plan (Phase 4)
 
 - [ ] Not started — EC2 + Docker + Supabase production setup
