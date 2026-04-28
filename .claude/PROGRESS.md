@@ -23,7 +23,7 @@
 - [x] Task 11: SpotDetailModal
 - [x] Task 12: HomePage
 - [x] Task 13: CategoryDetailPage + routing
-- [ ] **TODO: Delete UI (categories + spots)** — must use soft delete (`deletedAt` column); do not build until soft delete schema migration is done
+- [x] **Delete UI (categories + spots)** — implemented in Phase 2.4 (soft delete via `deletedAt`)
 
 ## UI Redesign Plan (Phase 2.1) — spec: docs/superpowers/specs/2026-04-23-ui-redesign-design.md
 ## Implementation plan: docs/superpowers/plans/2026-04-23-ui-redesign.md
