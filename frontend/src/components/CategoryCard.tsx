@@ -16,9 +16,12 @@ export function CategoryCard({ category, index, onClick, onEdit, onDelete }: Pro
   const emoji = category.emoji ?? getAutoEmoji(index)
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className="group relative w-full text-left rounded-xl border border-border bg-card p-4 hover:border-gray-200 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick() }}
+      className="group relative w-full text-left rounded-xl border border-border bg-card p-4 hover:border-gray-200 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
     >
       <div className="absolute right-2 top-2 flex items-center gap-1">
         {onEdit && (
@@ -51,6 +54,6 @@ export function CategoryCard({ category, index, onClick, onEdit, onDelete }: Pro
       <p className="font-semibold text-sm text-foreground leading-snug group-hover:text-primary transition-colors duration-200">
         {category.name}
       </p>
-    </button>
+    </div>
   )
 }

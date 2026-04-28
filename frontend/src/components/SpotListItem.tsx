@@ -14,9 +14,12 @@ export function SpotListItem({ spot, index, onClick, onDelete }: Props) {
   const gradient = getSpotGradient(index)
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className="group flex w-full items-center gap-3 border-b border-border bg-background px-4 py-3 text-left last:border-b-0 hover:bg-muted/50 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick() }}
+      className="group flex w-full items-center gap-3 border-b border-border bg-background px-4 py-3 text-left last:border-b-0 hover:bg-muted/50 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
     >
       <div
         className="h-11 w-11 shrink-0 rounded-xl"
@@ -43,6 +46,6 @@ export function SpotListItem({ spot, index, onClick, onDelete }: Props) {
         </button>
       )}
       <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors duration-150" />
-    </button>
+    </div>
   )
 }

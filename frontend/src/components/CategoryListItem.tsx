@@ -17,11 +17,14 @@ export function CategoryListItem({ category, index, isActive, onClick, onEdit, o
   const emoji = category.emoji ?? getAutoEmoji(index)
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick() }}
       aria-current={isActive ? 'page' : undefined}
       className={[
-        'group relative flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        'group relative flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer',
         isActive ? 'bg-accent' : 'hover:bg-muted',
       ].join(' ')}
     >
@@ -62,6 +65,6 @@ export function CategoryListItem({ category, index, isActive, onClick, onEdit, o
           <Trash2 className="h-3 w-3" />
         </button>
       )}
-    </button>
+    </div>
   )
 }

@@ -14,9 +14,12 @@ export function SpotCard({ spot, index, onClick, onDelete }: Props) {
   const gradient = getSpotGradient(index)
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className="group w-full text-left rounded-xl border border-border bg-card p-4 hover:border-gray-200 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick() }}
+      className="group w-full text-left rounded-xl border border-border bg-card p-4 hover:border-gray-200 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
     >
       <div className="mb-3 flex items-start justify-between gap-2">
         <div
@@ -58,6 +61,6 @@ export function SpotCard({ spot, index, onClick, onDelete }: Props) {
           {spot.notes}
         </p>
       )}
-    </button>
+    </div>
   )
 }
