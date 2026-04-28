@@ -12,9 +12,9 @@ export class CreateSpotDto {
   address?: string;
 
   @IsUrl()
-  @IsOptional()
+  @IsNotEmpty()
   @MaxLength(500)
-  mapsUrl?: string;
+  mapsUrl: string;
 
   @IsString()
   @IsOptional()

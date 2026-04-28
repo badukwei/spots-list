@@ -110,7 +110,7 @@ export function AddSpotModal({ open, onClose, categoryId }: Props) {
             {errors.address && <p className="mt-1 text-xs text-destructive">{errors.address.message}</p>}
           </div>
           <div>
-            <Input placeholder="Google Maps 連結（選填，需包含 https://）" {...mapsUrlRegister} disabled={isSubmitting} />
+            <Input placeholder="Google Maps 連結*（需包含 https://）" {...mapsUrlRegister} disabled={isSubmitting} />
             {errors.mapsUrl && <p className="mt-1 text-xs text-destructive">{errors.mapsUrl.message}</p>}
             {duplicateByUrl && (
               <div className="mt-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
