@@ -53,7 +53,7 @@ export function HomePage() {
 
       <main className="mx-auto max-w-5xl px-4 py-5">
         {/* Mobile: stories row */}
-        {categories && categories.length > 0 && (
+        {categories && categories.data.length > 0 && (
           <div className="mb-4 -mx-4 md:hidden">
             <div className="flex gap-4 overflow-x-auto px-4 pb-2 scrollbar-none">
               <button
@@ -65,7 +65,7 @@ export function HomePage() {
                 </div>
                 <span className="w-14 text-center text-[10px] text-muted-foreground leading-tight">新增分類</span>
               </button>
-              {categories.map((cat, i) => {
+              {categories.data.map((cat, i) => {
                 const color = getCategoryColor(i)
                 const emoji = cat.emoji ?? getAutoEmoji(i)
                 return (
@@ -107,16 +107,16 @@ export function HomePage() {
         {error && (
           <p className="py-12 text-center text-sm text-destructive">載入失敗，請重新整理</p>
         )}
-        {categories && categories.length === 0 && (
+        {categories && categories.data.length === 0 && (
           <p className="py-12 text-center text-sm text-muted-foreground">
             {search ? '找不到符合的分類' : '還沒有分類，來新增第一個吧！'}
           </p>
         )}
 
         {/* Category grid */}
-        {categories && categories.length > 0 && (
+        {categories && categories.data.length > 0 && (
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-            {categories.map((cat, i) => (
+            {categories.data.map((cat, i) => (
               <div key={cat.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
                 <CategoryCard
                   category={cat}

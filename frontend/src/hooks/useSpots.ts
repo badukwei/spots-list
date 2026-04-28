@@ -1,13 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
-import type { Spot } from '@/types'
+import type { Spot, PaginatedResponse } from '@/types'
 import type { SpotFormValues } from '@/schemas/spot'
 
-export function useSpots(categoryId: string | undefined) {
+export function useSpots(categoryId: string | undefined, page = 1, limit = 20) {
   return useQuery({
-    queryKey: ['spots', categoryId],
+    queryKey: ['spots', categoryId, page, limit],
     queryFn: async () => {
-      const { data } = await api.get<Spot[]>(`/categories/${categoryId}/spots`)
+      const { data } = await api.get<PaginatedResponse<Spot>>(
+        `/categories/${categoryId}/spots`,
+        { params: { page, limit } }
+      )
       return data
     },
     enabled: !!categoryId,

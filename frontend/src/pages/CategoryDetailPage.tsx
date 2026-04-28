@@ -66,7 +66,7 @@ export function CategoryDetailPage() {
           <p className="mb-2 px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             分類
           </p>
-          {allCategories?.map((cat, i) => (
+          {allCategories?.data.map((cat, i) => (
             <CategoryListItem
               key={cat.id}
               category={cat}
@@ -100,7 +100,7 @@ export function CategoryDetailPage() {
                 </h1>
                 {spots && (
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    {spots.length} 個地點
+                    {spots.total} 個地點
                   </p>
                 )}
               </div>
@@ -113,17 +113,17 @@ export function CategoryDetailPage() {
           {spotsError && (
             <p className="py-12 text-center text-sm text-destructive">載入失敗，請重新整理</p>
           )}
-          {spots && spots.length === 0 && (
+          {spots && spots.data.length === 0 && (
             <p className="py-12 text-center text-sm text-muted-foreground">
               這個分類還沒有地點，來新增第一個吧！
             </p>
           )}
 
-          {spots && spots.length > 0 && (
+          {spots && spots.data.length > 0 && (
             <>
               {/* Desktop: 3-col grid */}
               <div className="hidden gap-3 md:grid md:grid-cols-2 lg:grid-cols-3">
-                {spots.map((spot, i) => (
+                {spots.data.map((spot, i) => (
                   <div key={spot.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
                     <SpotCard spot={spot} index={i} onClick={() => setSelectedSpot(spot)} onDelete={() => setDeletingSpot(spot)} />
                   </div>
@@ -131,7 +131,7 @@ export function CategoryDetailPage() {
               </div>
               {/* Mobile: list */}
               <div className="md:hidden -mx-4 border-t border-border">
-                {spots.map((spot, i) => (
+                {spots.data.map((spot, i) => (
                   <div key={spot.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
                     <SpotListItem spot={spot} index={i} onClick={() => setSelectedSpot(spot)} onDelete={() => setDeletingSpot(spot)} />
                   </div>

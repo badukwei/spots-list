@@ -1,13 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
-import type { Category } from '@/types'
+import type { Category, PaginatedResponse } from '@/types'
 
-export function useCategories(search?: string) {
+export function useCategories(search?: string, page = 1, limit = 20) {
   return useQuery({
-    queryKey: ['categories', search ?? ''],
+    queryKey: ['categories', search ?? '', page, limit],
     queryFn: async () => {
-      const params = search ? { q: search } : {}
-      const { data } = await api.get<Category[]>('/categories', { params })
+      const params: Record<string, string | number> = { page, limit }
+      if (search) params.q = search
+      const { data } = await api.get<PaginatedResponse<Category>>('/categories', { params })
       return data
     },
   })

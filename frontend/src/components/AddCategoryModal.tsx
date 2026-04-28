@@ -37,7 +37,7 @@ export function AddCategoryModal({ open, onClose }: Props) {
 
   const fuse = useMemo(() => {
     if (!existingCategories) return null
-    return new Fuse(existingCategories, {
+    return new Fuse(existingCategories.data, {
       keys: ['name'],
       threshold: 0.4,
     })

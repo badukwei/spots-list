@@ -37,7 +37,7 @@ export function AddSpotModal({ open, onClose, categoryId }: Props) {
 
   const fuse = useMemo(() => {
     if (!existingSpots) return null
-    return new Fuse(existingSpots, {
+    return new Fuse(existingSpots.data, {
       keys: ['name'],
       threshold: 0.4,
     })
@@ -50,7 +50,7 @@ export function AddSpotModal({ open, onClose, categoryId }: Props) {
 
   const duplicateByUrl = useMemo(() => {
     if (!mapsUrlValue.trim() || !existingSpots) return null
-    return existingSpots.find(
+    return existingSpots.data.find(
       (s) => s.mapsUrl && s.mapsUrl.trim() === mapsUrlValue.trim()
     ) ?? null
   }, [mapsUrlValue, existingSpots])
