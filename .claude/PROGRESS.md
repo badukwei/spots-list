@@ -85,12 +85,12 @@
 - [x] E2e tests for rate limiting (test/throttler.e2e-spec.ts)
 - [x] Fix stale app.e2e-spec.ts scaffold test
 
-### Phase 3b: Pagination — IN PROGRESS (branch: phase-3-pagination)
+### Phase 3b: Pagination — COMPLETE (branch: phase-3-pagination)
 
 - [x] Task 29: Backend categories pagination — `GET /categories` returns `{ data, total, page, limit, totalPages }`; PaginationDto created
-- [ ] Task 30: Backend spots pagination — `GET /categories/:id/spots` same format
-- [ ] Task 31: Frontend PaginatedResponse type + update useCategories/useSpots hooks
-- [ ] Task 32: Frontend pagination UI (HomePage + CategoryDetailPage)
+- [x] Task 30: Backend spots pagination — `GET /categories/:id/spots` same format
+- [x] Task 31: Frontend PaginatedResponse type + update useCategories/useSpots hooks
+- [x] Task 32: Frontend pagination UI (HomePage + CategoryDetailPage) — Pagination component + prev/next controls
 
 ## Deployment Plan (Phase 4)
 
