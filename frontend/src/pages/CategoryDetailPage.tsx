@@ -1,5 +1,6 @@
 // frontend/src/pages/CategoryDetailPage.tsx
 import { useState, useEffect } from 'react'
+import { useDebounce } from '@/hooks/useDebounce'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { useCategories, useCategory, useDeleteCategory } from '@/hooks/useCategories'
@@ -23,10 +24,18 @@ export function CategoryDetailPage() {
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
   const [deletingSpot, setDeletingSpot] = useState<Spot | null>(null)
   const [spotsPage, setSpotsPage] = useState(1)
+  const [spotsSearch, setSpotsSearch] = useState('')
+  const debouncedSpotsSearch = useDebounce(spotsSearch, 300)
+  const [committedSpotsSearch, setCommittedSpotsSearch] = useState('')
 
   const { data: allCategories } = useCategories()
   const { data: category, isLoading: catLoading, error: catError } = useCategory(id)
-  const { data: spots, isLoading: spotsLoading, error: spotsError } = useSpots(id, spotsPage)
+  const { data: spots, isLoading: spotsLoading, error: spotsError } = useSpots(id, committedSpotsSearch || undefined, spotsPage)
+
+  useEffect(() => {
+    setCommittedSpotsSearch(debouncedSpotsSearch)
+    setSpotsPage(1)
+  }, [debouncedSpotsSearch])
   const deleteCategory = useDeleteCategory()
   const deleteSpot = useDeleteSpot(id ?? '')
 
@@ -109,6 +118,16 @@ export function CategoryDetailPage() {
             )}
           </div>
 
+          {/* Search bar */}
+          <div className="mb-4">
+            <input
+              value={spotsSearch}
+              onChange={(e) => setSpotsSearch(e.target.value)}
+              placeholder="🔍 搜尋地點…"
+              className="w-full rounded-xl bg-muted px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+
           {spotsLoading && (
             <p className="py-12 text-center text-sm text-muted-foreground">載入中…</p>
           )}
@@ -117,7 +136,7 @@ export function CategoryDetailPage() {
           )}
           {spots && spots.data.length === 0 && (
             <p className="py-12 text-center text-sm text-muted-foreground">
-              這個分類還沒有地點，來新增第一個吧！
+              {spotsSearch ? '找不到符合的地點' : '這個分類還沒有地點，來新增第一個吧！'}
             </p>
           )}
 

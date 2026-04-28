@@ -13,7 +13,7 @@ import { Throttle } from '@nestjs/throttler';
 import { SpotsService } from './spots.service';
 import { CreateSpotDto } from './dto/create-spot.dto';
 import { UpdateSpotDto } from './dto/update-spot.dto';
-import { PaginationDto } from '../common/dto/pagination.dto';
+import { SearchSpotDto } from './dto/search-spot.dto';
 
 @Controller()
 export class SpotsController {
@@ -23,9 +23,9 @@ export class SpotsController {
   @Get('categories/:categoryId/spots')
   findByCategory(
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
-    @Query() query: PaginationDto,
+    @Query() query: SearchSpotDto,
   ) {
-    return this.spotsService.findByCategory(categoryId, query.page, query.limit);
+    return this.spotsService.findByCategory(categoryId, query.q, query.page, query.limit);
   }
 
   @Post('categories/:categoryId/spots')

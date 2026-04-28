@@ -25,10 +25,15 @@ describe('SpotsController', () => {
     controller = module.get<SpotsController>(SpotsController);
   });
 
-  it('findByCategory calls service with categoryId and pagination', async () => {
+  it('findByCategory calls service with categoryId, pagination and no search', async () => {
     const result = await controller.findByCategory('cat-1', { page: 1, limit: 20 });
-    expect(mockService.findByCategory).toHaveBeenCalledWith('cat-1', 1, 20);
+    expect(mockService.findByCategory).toHaveBeenCalledWith('cat-1', undefined, 1, 20);
     expect(result).toEqual({ data: [], total: 0, page: 1, limit: 20, totalPages: 0 });
+  });
+
+  it('findByCategory passes search query to service', async () => {
+    await controller.findByCategory('cat-1', { q: 'coffee', page: 1, limit: 20 });
+    expect(mockService.findByCategory).toHaveBeenCalledWith('cat-1', 'coffee', 1, 20);
   });
 
   it('create calls service with categoryId and dto', async () => {

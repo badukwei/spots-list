@@ -71,7 +71,7 @@ describe('SpotsService', () => {
   describe('findByCategory', () => {
     it('returns empty paginated result when no spots', async () => {
       mockSelectForFindByCategory(0, []);
-      const result = await service.findByCategory('cat-1', 1, 20);
+      const result = await service.findByCategory('cat-1', undefined, 1, 20);
       expect(result).toEqual({ data: [], total: 0, page: 1, limit: 20, totalPages: 0 });
     });
 
@@ -84,7 +84,7 @@ describe('SpotsService', () => {
         createdAt: new Date(),
       };
       mockSelectForFindByCategory(1, [spot]);
-      const result = await service.findByCategory('cat-1', 1, 20);
+      const result = await service.findByCategory('cat-1', undefined, 1, 20);
       expect(result.data).toHaveLength(1);
       expect(result.total).toBe(1);
       expect(result.page).toBe(1);
@@ -92,11 +92,25 @@ describe('SpotsService', () => {
       expect(result.totalPages).toBe(1);
     });
 
+    it('filters spots by search query', async () => {
+      const spot = { id: 'spot-1', name: 'Coffee Shop', categoryId: 'cat-1', deletedAt: null, createdAt: new Date() };
+      mockSelectForFindByCategory(1, [spot]);
+      const result = await service.findByCategory('cat-1', 'coffee', 1, 20);
+      expect(result.data).toHaveLength(1);
+      expect(result.total).toBe(1);
+    });
+
+    it('returns empty result when search query matches nothing', async () => {
+      mockSelectForFindByCategory(0, []);
+      const result = await service.findByCategory('cat-1', 'zzznomatch', 1, 20);
+      expect(result).toEqual({ data: [], total: 0, page: 1, limit: 20, totalPages: 0 });
+    });
+
     it('throws NotFoundException when category not found', async () => {
       mockCategoriesService.findOne.mockRejectedValue(
         new NotFoundException('Category not found'),
       );
-      await expect(service.findByCategory('non-existent', 1, 20)).rejects.toThrow(
+      await expect(service.findByCategory('non-existent', undefined, 1, 20)).rejects.toThrow(
         NotFoundException,
       );
     });

@@ -3,13 +3,15 @@ import api from '@/lib/api'
 import type { Spot, PaginatedResponse } from '@/types'
 import type { SpotFormValues } from '@/schemas/spot'
 
-export function useSpots(categoryId: string | undefined, page = 1, limit = 20) {
+export function useSpots(categoryId: string | undefined, search?: string, page = 1, limit = 20) {
   return useQuery({
-    queryKey: ['spots', categoryId, page, limit],
+    queryKey: ['spots', categoryId, search ?? '', page, limit],
     queryFn: async () => {
+      const params: Record<string, string | number> = { page, limit }
+      if (search) params.q = search
       const { data } = await api.get<PaginatedResponse<Spot>>(
         `/categories/${categoryId}/spots`,
-        { params: { page, limit } }
+        { params }
       )
       return data
     },
