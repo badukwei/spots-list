@@ -30,7 +30,7 @@ export function SpotCard({ spot, index, onClick, onDelete }: Props) {
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); onDelete() }}
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="刪除地點"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -40,11 +40,9 @@ export function SpotCard({ spot, index, onClick, onDelete }: Props) {
       <p className="font-semibold text-sm text-foreground leading-snug group-hover:text-primary transition-colors duration-200">
         {spot.name}
       </p>
-      {spot.address && (
-        <p className="mt-1 text-xs text-muted-foreground truncate">
-          📍 {spot.address}
-        </p>
-      )}
+      <p className="mt-1 text-xs text-muted-foreground truncate">
+        {spot.address ? `📍 ${spot.address}` : '未提供地址'}
+      </p>
       {spot.notes && (
         <p className="mt-2 line-clamp-2 text-xs text-muted-foreground border-t border-border pt-2 leading-relaxed">
           {spot.notes}

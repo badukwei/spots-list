@@ -29,17 +29,15 @@ export function SpotListItem({ spot, index, onClick, onDelete }: Props) {
         <p className="truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors duration-150">
           {spot.name}
         </p>
-        {spot.address && (
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            📍 {spot.address}
-          </p>
-        )}
+        <p className="mt-0.5 truncate text-xs text-muted-foreground">
+          {spot.address ? `📍 ${spot.address}` : '未提供地址'}
+        </p>
       </div>
       {onDelete && (
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onDelete() }}
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="刪除地點"
         >
           <Trash2 className="h-3.5 w-3.5" />
