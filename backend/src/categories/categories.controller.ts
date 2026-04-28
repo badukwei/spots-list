@@ -9,6 +9,7 @@ import {
   Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -18,11 +19,13 @@ import { SearchCategoryDto } from './dto/search-category.dto';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @Throttle({ short: { ttl: 1000, limit: 2 } })
   @Get()
   findAll(@Query() query: SearchCategoryDto) {
     return this.categoriesService.findAll(query.q, query.page, query.limit);
   }
 
+  @Throttle({ short: { ttl: 1000, limit: 2 } })
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.categoriesService.findOne(id);

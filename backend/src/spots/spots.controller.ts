@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Query,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { SpotsService } from './spots.service';
 import { CreateSpotDto } from './dto/create-spot.dto';
 import { UpdateSpotDto } from './dto/update-spot.dto';
@@ -18,6 +19,7 @@ import { PaginationDto } from '../common/dto/pagination.dto';
 export class SpotsController {
   constructor(private readonly spotsService: SpotsService) {}
 
+  @Throttle({ short: { ttl: 1000, limit: 2 } })
   @Get('categories/:categoryId/spots')
   findByCategory(
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
