@@ -110,9 +110,19 @@
 - [x] Spot edit: `useUpdateSpot` hook + `EditSpotModal` + edit button on SpotCard + SpotListItem + wired in CategoryDetailPage
 - [x] `scripts/clear-all-data.sql` added for wiping test data before deploy
 
-## Deployment Plan (Phase 4)
+## Deployment Plan (Phase 4) — COMPLETE
 
-- [ ] Not started — EC2 + Docker + Supabase production setup
+- [x] Task 1: frontend/src/lib/api.ts — VITE_API_URL env var
+- [x] Task 2: Elastic IP 122.248.233.28 → EC2 i-0229f2f711847e337
+- [x] Task 3: Docker installed on EC2
+- [x] Task 4: Nginx installed + /etc/nginx/conf.d/api.conf (reverse proxy port 80 → 127.0.0.1:3001)
+- [x] Task 5: Security Group — SSH 22 + HTTP 80 (Cloudflare IP ranges)
+- [x] Task 6: .github/workflows/deploy.yml — build → GHCR → SSH deploy
+- [x] Task 7: GitHub Secrets (EC2_HOST, EC2_SSH_KEY, DATABASE_URL, FRONTEND_URL, GHCR_TOKEN)
+- [x] Task 8: First push + CI/CD verified (container running)
+- [x] Task 9: Cloudflare DNS — A record api.findingaspot.org → 122.248.233.28 (proxied)
+- [x] Task 10: Cloudflare Pages — findingaspot.org (custom domain)
+- [x] Task 11: End-to-end verified — frontend + API both 200
 
 ## Production Security Plan (Phase 5)
 
