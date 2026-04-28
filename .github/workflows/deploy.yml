@@ -47,6 +47,7 @@ jobs:
           script: |
             mkdir -p /home/ec2-user/spots
             printf "DATABASE_URL=%s\nFRONTEND_URL=%s\n" "$DATABASE_URL" "$FRONTEND_URL" > /home/ec2-user/spots/.env
+            chmod 600 /home/ec2-user/spots/.env
             echo "$GHCR_TOKEN" | docker login ghcr.io -u badukwei --password-stdin
             docker pull ghcr.io/badukwei/spots-list-backend:latest
             docker stop spots-backend || true
@@ -57,3 +58,5 @@ jobs:
               --env-file /home/ec2-user/spots/.env \
               -p 127.0.0.1:3001:3001 \
               ghcr.io/badukwei/spots-list-backend:latest
+            sleep 2
+            docker ps | grep -q spots-backend || { echo "Container failed to start"; exit 1; }
