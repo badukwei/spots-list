@@ -98,6 +98,18 @@
 - [x] `<button>` nested in `<button>` HTML error fixed (CategoryCard, CategoryListItem, SpotCard, SpotListItem → outer changed to `<div role="button">`)
 - [x] Double request bug: typing search on page 2 fired (newSearch, oldPage) + (newSearch, page=1) within ms, triggering short rate limit — fixed with `committedSearch` state batched atomically with `setPage(1)` in useEffect
 
+### Phase 3d: Search + Rate limit tuning + Spot Edit — COMPLETE
+
+- [x] GET endpoints rate limit relaxed: `short` TTL 1s limit 2 (was 1/3s) via `@Throttle` decorator on GET routes (categories + spots controllers)
+- [x] Spots search: `SearchSpotDto` (q, page, limit) + `ilike` filter in `spotsService.findByCategory` + backend tests
+- [x] Frontend spots search: `committedSpotsSearch` pattern in CategoryDetailPage + search input UI
+- [x] `useSpots` hook: added optional `search` param → passes `q` query param
+- [x] SpotCard: maps link moved inline with address row (no extra row)
+- [x] SpotCard / SpotListItem / CategoryListItem: delete + edit buttons always visible (removed opacity-0)
+- [x] SpotCard / SpotListItem: show "未提供地址" when address is empty
+- [x] Spot edit: `useUpdateSpot` hook + `EditSpotModal` + edit button on SpotCard + SpotListItem + wired in CategoryDetailPage
+- [x] `scripts/clear-all-data.sql` added for wiping test data before deploy
+
 ## Deployment Plan (Phase 4)
 
 - [ ] Not started — EC2 + Docker + Supabase production setup
