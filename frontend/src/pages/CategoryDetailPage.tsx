@@ -11,6 +11,7 @@ import { AddSpotModal } from '@/components/AddSpotModal'
 import { SpotDetailModal } from '@/components/SpotDetailModal'
 import { EditCategoryModal } from '@/components/EditCategoryModal'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { Pagination } from '@/components/Pagination'
 import type { Spot, Category } from '@/types'
 
 export function CategoryDetailPage() {
@@ -21,10 +22,11 @@ export function CategoryDetailPage() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
   const [deletingSpot, setDeletingSpot] = useState<Spot | null>(null)
+  const [spotsPage, setSpotsPage] = useState(1)
 
   const { data: allCategories } = useCategories()
   const { data: category, isLoading: catLoading, error: catError } = useCategory(id)
-  const { data: spots, isLoading: spotsLoading, error: spotsError } = useSpots(id)
+  const { data: spots, isLoading: spotsLoading, error: spotsError } = useSpots(id, spotsPage)
   const deleteCategory = useDeleteCategory()
   const deleteSpot = useDeleteSpot(id ?? '')
 
@@ -137,6 +139,11 @@ export function CategoryDetailPage() {
                   </div>
                 ))}
               </div>
+              <Pagination
+                page={spots.page}
+                totalPages={spots.totalPages}
+                onPageChange={setSpotsPage}
+              />
             </>
           )}
         </main>

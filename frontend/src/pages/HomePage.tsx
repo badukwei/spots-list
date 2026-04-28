@@ -1,5 +1,5 @@
 // frontend/src/pages/HomePage.tsx
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCategories, useDeleteCategory } from '@/hooks/useCategories'
 import { CategoryCard } from '@/components/CategoryCard'
@@ -8,6 +8,7 @@ import { EditCategoryModal } from '@/components/EditCategoryModal'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { useDebounce } from '@/hooks/useDebounce'
 import { getAutoEmoji, getCategoryColor } from '@/lib/emoji'
+import { Pagination } from '@/components/Pagination'
 import type { Category } from '@/types'
 
 export function HomePage() {
@@ -17,8 +18,13 @@ export function HomePage() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
   const debouncedSearch = useDebounce(search, 300)
+  const [page, setPage] = useState(1)
   const deleteCategory = useDeleteCategory()
-  const { data: categories, isLoading, error } = useCategories(debouncedSearch || undefined)
+  const { data: categories, isLoading, error } = useCategories(debouncedSearch || undefined, page)
+
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedSearch])
 
   const handleCategoryClick = useCallback(
     (id: string) => navigate(`/categories/${id}`),
@@ -115,19 +121,26 @@ export function HomePage() {
 
         {/* Category grid */}
         {categories && categories.data.length > 0 && (
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-            {categories.data.map((cat, i) => (
-              <div key={cat.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
-                <CategoryCard
-                  category={cat}
-                  index={i}
-                  onClick={() => handleCategoryClick(cat.id)}
-                  onEdit={() => setEditingCategory(cat)}
-                  onDelete={() => setDeletingCategory(cat)}
-                />
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+              {categories.data.map((cat, i) => (
+                <div key={cat.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
+                  <CategoryCard
+                    category={cat}
+                    index={i}
+                    onClick={() => handleCategoryClick(cat.id)}
+                    onEdit={() => setEditingCategory(cat)}
+                    onDelete={() => setDeletingCategory(cat)}
+                  />
+                </div>
+              ))}
+            </div>
+            <Pagination
+              page={categories.page}
+              totalPages={categories.totalPages}
+              onPageChange={setPage}
+            />
+          </>
         )}
       </main>
 
