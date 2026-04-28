@@ -19,10 +19,15 @@ export function HomePage() {
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
   const debouncedSearch = useDebounce(search, 300)
   const [page, setPage] = useState(1)
+  // committedSearch always changes atomically with page reset (via batched effect)
+  // so useCategories never sees an intermediate state of (newSearch, oldPage)
+  const [committedSearch, setCommittedSearch] = useState('')
   const deleteCategory = useDeleteCategory()
-  const { data: categories, isLoading, error } = useCategories(debouncedSearch || undefined, page)
+  const { data: categories, isLoading, error } = useCategories(committedSearch || undefined, page)
 
   useEffect(() => {
+    // React 18 batches these two setStates into one render → one request
+    setCommittedSearch(debouncedSearch)
     setPage(1)
   }, [debouncedSearch])
 
